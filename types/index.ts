@@ -32,6 +32,35 @@ export interface WeeklyTrainingHabit {
   updated_at?: string;
 }
 
+export interface MetaNutricionalDia {
+  dias: string[];
+  calorias: number;
+  pctCarbs: number;
+  pctProteina: number;
+  pctGrasa: number;
+  gramosCarbs: number;
+  gramosProteina: number;
+  gramosGrasa: number;
+  tipoDia: string;
+  badge: string;
+  enfoque: string;
+}
+
+export interface RegistroNutricionDiaria {
+  id: string;
+  fecha: string;
+  calorias: number;
+  proteina: number;
+  carbs: number;
+  grasa: number;
+  agua: number;
+  peso?: number;
+  notas?: string;
+  user_id?: string;
+  creado_en?: string;
+  actualizado_en?: string;
+}
+
 export interface Habito {
   id: string;
   nombre: string;

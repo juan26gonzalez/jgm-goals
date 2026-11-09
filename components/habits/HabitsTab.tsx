@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import Modal from '@/components/ui/Modal';
 import { sumarDiasFechaStr } from '@/lib/dateUtils';
 import TrainingTracker from '@/components/training/TrainingTracker';
+import NutritionTracker from '@/components/nutrition/NutritionTracker';
 import type { Habito, HabitoRegistro, UserSession, BloqueHabito } from '@/types';
 
 interface HabitsTabProps {
@@ -31,8 +32,8 @@ export default function HabitsTab({
   onHabitoAgregado,
   onMarcarHabito
 }: HabitsTabProps) {
-  // Submódulo activo: Targets Diarios o Training Tracker
-  const [submodulo, setSubmodulo] = useState<'targets' | 'training'>('targets');
+  // Submódulo activo: Targets Diarios, Training Tracker o Nutrición MFP
+  const [submodulo, setSubmodulo] = useState<'targets' | 'training' | 'nutrition'>('targets');
 
   // Selector de fecha (Hoy o Ayer para edición retroactiva)
   const fechaAyer = sumarDiasFechaStr(strHoy, -1);
@@ -292,12 +293,12 @@ export default function HabitsTab({
   return (
     <div className="max-w-6xl mx-auto animate-fade-in space-y-6">
       
-      {/* Selector de Submódulo: Targets Diarios vs Training Tracker */}
-      <div className="flex items-center gap-1.5 bg-[#FAF5F0] p-1.5 rounded-2xl border border-[#EADBCE]/80 text-xs font-bold w-fit shadow-2xs">
+      {/* Selector de Submódulo: Targets Diarios vs Training Tracker vs Nutrición MFP */}
+      <div className="flex flex-wrap items-center gap-1.5 bg-[#FAF5F0] p-1.5 rounded-2xl border border-[#EADBCE]/80 text-xs font-bold w-fit shadow-2xs">
         <button
           type="button"
           onClick={() => setSubmodulo('targets')}
-          className={`px-4 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-2 ${
+          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${
             submodulo === 'targets'
               ? 'bg-[#2D1C14] text-white shadow-xs'
               : 'text-[#8D6B57] hover:text-[#2D1C14]'
@@ -309,7 +310,7 @@ export default function HabitsTab({
         <button
           type="button"
           onClick={() => setSubmodulo('training')}
-          className={`px-4 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-2 ${
+          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${
             submodulo === 'training'
               ? 'bg-[#2D1C14] text-white shadow-xs'
               : 'text-[#8D6B57] hover:text-[#2D1C14]'
@@ -322,11 +323,34 @@ export default function HabitsTab({
             Bento
           </span>
         </button>
+
+        <button
+          type="button"
+          onClick={() => setSubmodulo('nutrition')}
+          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${
+            submodulo === 'nutrition'
+              ? 'bg-[#2D1C14] text-white shadow-xs'
+              : 'text-[#8D6B57] hover:text-[#2D1C14]'
+          }`}
+        >
+          <span>🥗 Nutrición MFP</span>
+          <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md border ${
+            submodulo === 'nutrition' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-white text-[#8D6B57] border-[#EADBCE]/60'
+          }`}>
+            Macros
+          </span>
+        </button>
       </div>
 
-      {submodulo === 'training' ? (
+      {submodulo === 'training' && (
         <TrainingTracker sesion={sesion} />
-      ) : (
+      )}
+
+      {submodulo === 'nutrition' && (
+        <NutritionTracker sesion={sesion} strHoy={strHoy} />
+      )}
+
+      {submodulo === 'targets' && (
         <>
           {/* Botón de apertura / cierre del formulario, Selector de Fecha (Hoy/Ayer) y Filtro de Bloque */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3.5 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)]">
