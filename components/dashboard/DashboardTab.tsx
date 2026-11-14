@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import Modal from '@/components/ui/Modal';
 import { getFechaActualColombia, sumarDiasFechaStr } from '@/lib/dateUtils';
 import { limpiarConceptoGasto, extraerCompraDeGasto } from '@/types';
+import { 
+  IconTarget, 
+  IconWallet, 
+  IconShoppingBag, 
+  IconCreditCard, 
+  IconCheck 
+} from '@/components/ui/Icons';
 import type { Gasto, MercadoItem, Habito, HabitoRegistro, CompraHistorial } from '@/types';
 
 interface DashboardTabProps {
@@ -108,13 +115,15 @@ export default function DashboardTab({
         </div>
         <div className="flex flex-col gap-1.5 flex-grow">
           {filtroFinanzas && gastosDelDia.map((g, i) => (
-            <span key={`g-${i}`} className="bg-[#FAF5F0] text-[#3E271D] border border-[#EADBCE] text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 truncate shadow-2xs">
-              💳 {limpiarConceptoGasto(g.concepto)}
+            <span key={`g-${i}`} className="bg-[#FAF5F0] text-[#3E271D] border border-[#EADBCE] text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1.5 truncate shadow-2xs">
+              <IconCreditCard className="w-3 h-3 text-[#8D6B57] shrink-0" />
+              <span className="truncate">{limpiarConceptoGasto(g.concepto)}</span>
             </span>
           ))}
           {filtroMercado && comprasDelDia.length > 0 && (
-            <span key="compras" className="bg-[#FAF5F0] text-[#3E271D] border border-[#EADBCE] text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 truncate shadow-2xs">
-              🛒 Súper ({comprasDelDia.length})
+            <span key="compras" className="bg-[#FAF5F0] text-[#3E271D] border border-[#EADBCE] text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1.5 truncate shadow-2xs">
+              <IconShoppingBag className="w-3 h-3 text-[#8D6B57] shrink-0" />
+              <span>Súper ({comprasDelDia.length})</span>
             </span>
           )}
           {/* Solo actividades programadas para este día */}
@@ -185,8 +194,8 @@ export default function DashboardTab({
       {/* KPI Cards Superiores en Marrón Elegante y Blanco */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center text-xl font-bold shrink-0 border border-[#EADBCE]/60">
-            🗓️
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
+            <IconTarget className="w-6 h-6" />
           </div>
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">Hábitos de Hoy</span>
@@ -198,8 +207,8 @@ export default function DashboardTab({
         </div>
 
         <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center text-xl font-bold shrink-0 border border-[#EADBCE]/60">
-            💰
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
+            <IconWallet className="w-6 h-6" />
           </div>
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">Compromisos Financieros</span>
@@ -210,8 +219,8 @@ export default function DashboardTab({
         </div>
 
         <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center text-xl font-bold shrink-0 border border-[#EADBCE]/60">
-            🛒
+          <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
+            <IconShoppingBag className="w-6 h-6" />
           </div>
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">Total Proyectado Súper</span>
@@ -227,21 +236,24 @@ export default function DashboardTab({
         <span className="text-[#8D6B57] uppercase tracking-wider text-[10px] flex items-center px-2 mr-1">Filtros:</span>
         <button 
           onClick={() => setFiltroHabitos(!filtroHabitos)} 
-          className={`px-3 py-1.5 rounded-xl transition-all active:scale-95 ${filtroHabitos ? 'bg-[#2D1C14] text-white shadow-xs' : 'bg-[#FAF5F0] text-[#8D6B57]'}`}
+          className={`px-3 py-1.5 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${filtroHabitos ? 'bg-[#2D1C14] text-white shadow-xs' : 'bg-[#FAF5F0] text-[#8D6B57]'}`}
         >
-          🗓️ Targets
+          <IconTarget className="w-3.5 h-3.5" />
+          <span>Targets</span>
         </button>
         <button 
           onClick={() => setFiltroFinanzas(!filtroFinanzas)} 
-          className={`px-3 py-1.5 rounded-xl transition-all active:scale-95 ${filtroFinanzas ? 'bg-[#2D1C14] text-white shadow-xs' : 'bg-[#FAF5F0] text-[#8D6B57]'}`}
+          className={`px-3 py-1.5 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${filtroFinanzas ? 'bg-[#2D1C14] text-white shadow-xs' : 'bg-[#FAF5F0] text-[#8D6B57]'}`}
         >
-          💰 Gastos
+          <IconWallet className="w-3.5 h-3.5" />
+          <span>Gastos</span>
         </button>
         <button 
           onClick={() => setFiltroMercado(!filtroMercado)} 
-          className={`px-3 py-1.5 rounded-xl transition-all active:scale-95 ${filtroMercado ? 'bg-[#2D1C14] text-white shadow-xs' : 'bg-[#FAF5F0] text-[#8D6B57]'}`}
+          className={`px-3 py-1.5 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${filtroMercado ? 'bg-[#2D1C14] text-white shadow-xs' : 'bg-[#FAF5F0] text-[#8D6B57]'}`}
         >
-          🛒 Súper
+          <IconShoppingBag className="w-3.5 h-3.5" />
+          <span>Súper</span>
         </button>
       </div>
 

@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabase';
 import { getFechaActualColombia, sumarDiasFechaStr, formatearFechaBonita } from '@/lib/dateUtils';
+import { 
+  IconNutrition, 
+  IconBolt, 
+  IconDownload, 
+  IconCloud, 
+  IconDroplet, 
+  IconEdit, 
+  IconCheck, 
+  IconX 
+} from '@/components/ui/Icons';
 import type { UserSession, MetaNutricionalDia, RegistroNutricionDiaria } from '@/types';
 
 interface NutritionTrackerProps {
@@ -542,8 +552,8 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
       {/* Barra de Sincronización y Acciones Rápidas */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)]">
         <div className="flex items-center gap-2.5">
-          <div className="w-10 h-10 rounded-2xl bg-[#2D1C14] text-white flex items-center justify-center text-lg font-black shrink-0 shadow-2xs">
-            🥗
+          <div className="w-10 h-10 rounded-2xl bg-[#2D1C14] text-white flex items-center justify-center shrink-0 shadow-2xs">
+            <IconNutrition className="w-5 h-5 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -566,7 +576,8 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             onClick={() => abrirModalRegistro(fechaHoy)}
             className="flex-1 sm:flex-none bg-[#2D1C14] hover:bg-[#3E271D] text-white font-bold px-4 py-2.5 rounded-xl active:scale-95 transition-all text-xs flex items-center justify-center gap-1.5 shadow-xs"
           >
-            <span>⚡</span> Registrar Hoy
+            <IconBolt className="w-3.5 h-3.5" />
+            <span>Registrar Hoy</span>
           </button>
 
           <button
@@ -575,17 +586,19 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             className="flex-1 sm:flex-none bg-[#FAF5F0] hover:bg-[#F3ECE4] text-[#2D1C14] font-bold px-3.5 py-2.5 rounded-xl active:scale-95 transition-all text-xs border border-[#EADBCE] flex items-center justify-center gap-1.5 shadow-2xs"
             title="Importar CSV exportado de MyFitnessPal Premium"
           >
-            <span>📥</span> Importar CSV
+            <IconDownload className="w-3.5 h-3.5" />
+            <span>Importar CSV</span>
           </button>
 
           {!sincronizadoNube && (
             <button
               type="button"
               onClick={() => setModalSql(true)}
-              className="text-[11px] font-bold text-[#8D6B57] hover:text-[#2D1C14] bg-white border border-[#EADBCE]/80 px-2.5 py-2 rounded-xl transition-all active:scale-95"
+              className="text-[11px] font-bold text-[#8D6B57] hover:text-[#2D1C14] bg-white border border-[#EADBCE]/80 px-2.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5"
               title="Activar Nube en Supabase"
             >
-              ☁️ Nube
+              <IconCloud className="w-3.5 h-3.5" />
+              <span>Nube</span>
             </button>
           )}
         </div>
@@ -696,9 +709,19 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             <button
               type="button"
               onClick={() => abrirModalRegistro(fechaSeleccionada)}
-              className="flex-1 py-2.5 px-4 bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold rounded-xl active:scale-95 transition-all text-center shadow-xs"
+              className="flex-1 py-2.5 px-4 bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold rounded-xl active:scale-95 transition-all text-center shadow-xs flex items-center justify-center gap-1.5"
             >
-              {registroHoy.calorias > 0 ? '✏️ Actualizar Macros de este día' : '⚡ Registrar Macros de este día'}
+              {registroHoy.calorias > 0 ? (
+                <>
+                  <IconEdit className="w-3.5 h-3.5" />
+                  <span>Actualizar Macros de este día</span>
+                </>
+              ) : (
+                <>
+                  <IconBolt className="w-3.5 h-3.5" />
+                  <span>Registrar Macros de este día</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -796,7 +819,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
           {/* 💧 Hidratación */}
           <div className="bg-white p-4 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-lg">💧</span>
+              <IconDroplet className="w-5 h-5 text-sky-600" />
               <span className="text-[9px] font-black uppercase text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
                 Meta 3.0 L
               </span>

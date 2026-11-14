@@ -4,6 +4,19 @@ import Modal from '@/components/ui/Modal';
 import { sumarDiasFechaStr } from '@/lib/dateUtils';
 import TrainingTracker from '@/components/training/TrainingTracker';
 import NutritionTracker from '@/components/nutrition/NutritionTracker';
+import { 
+  IconTarget, 
+  IconDumbbell, 
+  IconNutrition, 
+  IconPlus, 
+  IconX, 
+  IconEdit, 
+  IconTrash, 
+  IconFlame, 
+  IconSunrise, 
+  IconSun, 
+  IconMoon 
+} from '@/components/ui/Icons';
 import type { Habito, HabitoRegistro, UserSession, BloqueHabito } from '@/types';
 
 interface HabitsTabProps {
@@ -18,10 +31,10 @@ interface HabitsTabProps {
 const diasSemanaOpciones = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 const emojisComunes = ['🏃‍♂️', '💧', '📚', '🏋️‍♂️', '🍎', '🍳', '💤', '💻', '🧘‍♂️', '🧹', '📖', '🚴‍♂️', '💊', '💰', '🚿', '🚗'];
 
-const bloqueConfig: Record<string, { icon: string; bgTag: string; textTag: string }> = {
-  'Mañana': { icon: '🌅', bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' },
-  'Tarde': { icon: '☀️', bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' },
-  'Noche': { icon: '🌙', bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' }
+const bloqueConfig: Record<string, { icon: React.ReactNode; bgTag: string; textTag: string }> = {
+  'Mañana': { icon: <IconSunrise className="w-4 h-4 text-[#8D6B57]" />, bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' },
+  'Tarde': { icon: <IconSun className="w-4 h-4 text-[#8D6B57]" />, bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' },
+  'Noche': { icon: <IconMoon className="w-4 h-4 text-[#8D6B57]" />, bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' }
 };
 
 export default function HabitsTab({
@@ -298,25 +311,27 @@ export default function HabitsTab({
         <button
           type="button"
           onClick={() => setSubmodulo('targets')}
-          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-2 ${
             submodulo === 'targets'
               ? 'bg-[#2D1C14] text-white shadow-xs'
               : 'text-[#8D6B57] hover:text-[#2D1C14]'
           }`}
         >
-          <span>🎯 Targets Diarios</span>
+          <IconTarget className="w-4 h-4" />
+          <span>Targets Diarios</span>
         </button>
 
         <button
           type="button"
           onClick={() => setSubmodulo('training')}
-          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-2 ${
             submodulo === 'training'
               ? 'bg-[#2D1C14] text-white shadow-xs'
               : 'text-[#8D6B57] hover:text-[#2D1C14]'
           }`}
         >
-          <span>🏋️‍♂️ Training Tracker</span>
+          <IconDumbbell className="w-4 h-4" />
+          <span>Training Tracker</span>
           <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md border ${
             submodulo === 'training' ? 'bg-[#FAF5F0] text-[#2D1C14] border-[#EADBCE]' : 'bg-white text-[#8D6B57] border-[#EADBCE]/60'
           }`}>
@@ -327,13 +342,14 @@ export default function HabitsTab({
         <button
           type="button"
           onClick={() => setSubmodulo('nutrition')}
-          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-2 ${
             submodulo === 'nutrition'
               ? 'bg-[#2D1C14] text-white shadow-xs'
               : 'text-[#8D6B57] hover:text-[#2D1C14]'
           }`}
         >
-          <span>🥗 Nutrición MFP</span>
+          <IconNutrition className="w-4 h-4" />
+          <span>Nutrición MFP</span>
           <span className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md border ${
             submodulo === 'nutrition' ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-white text-[#8D6B57] border-[#EADBCE]/60'
           }`}>
@@ -358,7 +374,17 @@ export default function HabitsTab({
           onClick={() => setMostrarFormulario(!mostrarFormulario)}
           className="bg-[#2D1C14] hover:bg-[#3E271D] text-white font-bold px-4 py-2.5 rounded-2xl active:scale-95 transition-all flex items-center gap-2 shadow-xs text-xs"
         >
-          <span>{mostrarFormulario ? '✕ Cerrar' : '🎯 Nuevo Target'}</span>
+          {mostrarFormulario ? (
+            <>
+              <IconX className="w-3.5 h-3.5" />
+              <span>Cerrar</span>
+            </>
+          ) : (
+            <>
+              <IconPlus className="w-3.5 h-3.5" />
+              <span>Nuevo Target</span>
+            </>
+          )}
         </button>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -614,25 +640,25 @@ export default function HabitsTab({
                           <div className="flex items-center gap-0.5 opacity-80 group-hover:opacity-100 transition-opacity">
                             <button 
                               onClick={() => abrirEdicion(habito)}
-                              className="w-6 h-6 rounded-md hover:bg-[#FAF5F0] text-[#8D6B57] hover:text-[#2D1C14] flex items-center justify-center transition-colors text-xs active:scale-95"
+                              className="w-6 h-6 rounded-md hover:bg-[#FAF5F0] text-[#8D6B57] hover:text-[#2D1C14] flex items-center justify-center transition-colors active:scale-95"
                               title="Editar"
                             >
-                              ✏️
+                              <IconEdit className="w-3.5 h-3.5" />
                             </button>
                             <button 
                               onClick={() => setHabitoAEliminar(habito)}
-                              className="w-6 h-6 rounded-md hover:bg-rose-50 text-[#8D6B57] hover:text-rose-600 flex items-center justify-center transition-colors text-xs active:scale-95"
+                              className="w-6 h-6 rounded-md hover:bg-rose-50 text-[#8D6B57] hover:text-rose-600 flex items-center justify-center transition-colors active:scale-95"
                               title="Eliminar"
                             >
-                              🗑️
+                              <IconTrash className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         </div>
 
                         {/* Barra de progreso y rachas */}
                         <div className="mt-3 pt-2.5 border-t border-[#EADBCE]/50 flex items-center justify-between text-xs">
-                          <div className="flex items-center gap-1" title={`Racha actual de ${rachaActual} días`}>
-                            <span className={`text-sm ${rachaActual > 0 ? 'opacity-100' : 'opacity-20 grayscale'}`}>🔥</span>
+                          <div className="flex items-center gap-1.5" title={`Racha actual de ${rachaActual} días`}>
+                            <IconFlame className={`w-3.5 h-3.5 ${rachaActual > 0 ? 'text-amber-600' : 'text-neutral-300'}`} />
                             <span className="font-extrabold text-[#2D1C14] text-xs">{rachaActual}</span>
                             <span className="text-[10px] text-[#8D6B57] font-bold uppercase">días</span>
                           </div>

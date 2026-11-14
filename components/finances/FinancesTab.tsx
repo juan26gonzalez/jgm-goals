@@ -13,6 +13,14 @@ import {
   obtenerMesAnioTexto, 
   formatearFechaBonita 
 } from '@/lib/dateUtils';
+import { 
+  IconCreditCard, 
+  IconCheck, 
+  IconPlus, 
+  IconX, 
+  IconSparkles,
+  IconRefresh 
+} from '@/components/ui/Icons';
 import type { Gasto, CuotaAporte, UserSession, PagoCubierto, AporteDetalle } from '@/types';
 
 interface FinancesTabProps {
@@ -373,7 +381,7 @@ export default function FinancesTab({
       {notificacionToast && (
         <div className="bg-[#2D1C14] text-white p-4 rounded-3xl border border-[#4A3225] shadow-[0_8px_24px_rgba(45,28,20,0.2)] flex items-center justify-between gap-3 animate-fade-in sticky top-4 z-40">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="text-xl shrink-0">✨</span>
+            <IconSparkles className="w-5 h-5 text-[#E5C8B4] shrink-0" />
             <p className="text-xs sm:text-sm font-bold tracking-tight text-[#FAF7F4] truncate">
               {notificacionToast}
             </p>
@@ -383,7 +391,7 @@ export default function FinancesTab({
             onClick={() => setNotificacionToast(null)}
             className="text-xs font-bold text-[#E5C8B4] hover:text-white px-2 py-1 shrink-0"
           >
-            ✕
+            <IconX className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
@@ -400,7 +408,8 @@ export default function FinancesTab({
                 : 'text-[#8D6B57] hover:text-[#2D1C14]'
             }`}
           >
-            <span>💳 Compromisos del Mes</span>
+            <IconCreditCard className="w-4 h-4" />
+            <span>Compromisos del Mes</span>
             <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold ${
               submodulo === 'activos' ? 'bg-white/20 text-white' : 'bg-white text-[#6F4A39] border border-[#EADBCE]/60'
             }`}>
@@ -417,7 +426,8 @@ export default function FinancesTab({
                 : 'text-[#8D6B57] hover:text-[#2D1C14]'
             }`}
           >
-            <span>✅ Pagos Cubiertos</span>
+            <IconCheck className="w-4 h-4" />
+            <span>Pagos Cubiertos</span>
             <span className={`text-[10px] px-2 py-0.5 rounded-md font-extrabold ${
               submodulo === 'cubiertos' ? 'bg-white/20 text-white' : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
             }`}>
@@ -431,7 +441,17 @@ export default function FinancesTab({
             onClick={() => setMostrarFormulario(!mostrarFormulario)}
             className="bg-[#2D1C14] hover:bg-[#3E271D] text-white font-bold px-4 py-2.5 rounded-2xl active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs text-xs self-stretch sm:self-auto"
           >
-            <span>{mostrarFormulario ? '✕ Cerrar' : '➕ Nuevo Gasto'}</span>
+            {mostrarFormulario ? (
+              <>
+                <IconX className="w-3.5 h-3.5" />
+                <span>Cerrar</span>
+              </>
+            ) : (
+              <>
+                <IconPlus className="w-3.5 h-3.5" />
+                <span>Nuevo Gasto</span>
+              </>
+            )}
           </button>
         )}
       </div>
@@ -461,7 +481,7 @@ export default function FinancesTab({
                 disabled={renovandoTodos}
                 className="w-full sm:w-auto px-4 py-2.5 bg-[#2D1C14] hover:bg-[#3E271D] text-white rounded-xl text-xs font-bold active:scale-95 transition-all shadow-xs shrink-0 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <span>🔄</span>
+                <IconRefresh className="w-3.5 h-3.5" />
                 <span>{renovandoTodos ? 'Renovando...' : `Renovar ${gastosCubiertosPendientesRenovar.length === 1 ? 'el pago' : `los ${gastosCubiertosPendientesRenovar.length} pagos`}`}</span>
               </button>
             </div>

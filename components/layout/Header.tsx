@@ -1,5 +1,6 @@
 import React from 'react';
 import type { NavItem, TabType } from '@/types';
+import { NavTabIcon } from '@/components/ui/Icons';
 
 interface HeaderProps {
   pestañaActiva: TabType;
@@ -30,7 +31,7 @@ export default function Header({ pestañaActiva, setPestañaActiva, navItems, on
         </button>
       </div>
       
-      {/* Navegación Desktop con Letras en Marrón Elegante y Blanco */}
+      {/* Navegación Desktop con Iconos SVG Minimalistas */}
       <div className="hidden md:flex gap-1.5 mt-5 bg-white p-1.5 rounded-2xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 w-max">
         {navItems.map(item => {
           const isActive = pestañaActiva === item.id;
@@ -44,11 +45,10 @@ export default function Header({ pestañaActiva, setPestañaActiva, navItems, on
                   : 'text-[#6F4A39] hover:bg-[#FAF5F0] hover:text-[#2D1C14]'
               }`}
             >
-              <span className={`text-base transition-all filter grayscale contrast-150 inline-block ${
-                isActive ? 'invert brightness-200' : 'brightness-75 opacity-75'
-              }`}>
-                {item.icon}
-              </span> 
+              <NavTabIcon 
+                tabId={item.id} 
+                className={`w-4 h-4 transition-all ${isActive ? 'text-white' : 'text-[#8D6B57]'}`} 
+              />
               <span>{item.label}</span>
             </button>
           );

@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import Modal from '@/components/ui/Modal';
 import { extraerCompraDeGasto } from '@/types';
+import { 
+  IconShoppingBag, 
+  IconReceipt, 
+  IconPackage, 
+  IconPlus, 
+  IconCheck, 
+  IconTrash, 
+  IconEdit 
+} from '@/components/ui/Icons';
 import type { MercadoProducto, MercadoItem, UserSession, Gasto, CompraHistorial, CompraHistorialItem } from '@/types';
 
 interface GroceryTabProps {
@@ -492,7 +501,8 @@ export default function GroceryTab({
                 : 'text-[#8D6B57] hover:text-[#2D1C14]'
             }`}
           >
-            <span>🛒 Compra Actual</span>
+            <IconShoppingBag className="w-4 h-4" />
+            <span>Compra Actual</span>
             <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
               vistaPrincipal === 'compra_actual' ? 'bg-[#FAF5F0] text-[#2D1C14]' : 'bg-white text-[#8D6B57]'
             }`}>
@@ -509,7 +519,8 @@ export default function GroceryTab({
                 : 'text-[#8D6B57] hover:text-[#2D1C14]'
             }`}
           >
-            <span>📋 Historial de Compras</span>
+            <IconReceipt className="w-4 h-4" />
+            <span>Historial de Compras</span>
             <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${
               vistaPrincipal === 'historial' ? 'bg-[#FAF5F0] text-[#2D1C14]' : 'bg-white text-[#8D6B57]'
             }`}>
@@ -521,7 +532,7 @@ export default function GroceryTab({
         {/* Notificación de éxito al guardar compra */}
         {mensajeExitoCompra && (
           <div className="text-xs font-bold text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-xl border border-emerald-200 shadow-2xs animate-fade-in flex items-center gap-1.5">
-            <span>✅</span> {mensajeExitoCompra}
+            <IconCheck className="w-4 h-4 text-emerald-600" /> {mensajeExitoCompra}
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { getFechaActualColombia } from '@/lib/dateUtils';
+import { IconDumbbell, IconCloud, IconBolt, IconCheck, IconRefresh } from '@/components/ui/Icons';
 import type { WeeklyTrainingHabit, UserSession } from '@/types';
 
 interface TrainingTrackerProps {
@@ -385,7 +386,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
       {!sincronizadoNube ? (
         <div className="bg-[#FAF5F0] border border-[#EADBCE] text-[#4A3225] p-3.5 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs font-semibold shadow-2xs">
           <div className="flex items-start sm:items-center gap-2.5">
-            <span className="text-xl shrink-0">☁️</span>
+            <IconCloud className="w-5 h-5 text-[#8D6B57] shrink-0" />
             <div>
               <p className="font-bold text-[#2D1C14]">
                 Nube Supabase pendiente por activar
@@ -400,7 +401,8 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
             onClick={() => setMostrarModalSql(true)}
             className="w-full sm:w-auto text-xs font-bold bg-[#2D1C14] hover:bg-[#3E271D] text-white px-3.5 py-2 rounded-xl transition-all active:scale-95 shadow-xs shrink-0 flex items-center justify-center gap-1.5"
           >
-            <span>⚡</span> Activar Nube Supabase
+            <IconBolt className="w-3.5 h-3.5" />
+            <span>Activar Nube Supabase</span>
           </button>
         </div>
       ) : (
@@ -420,7 +422,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
       {notificacionEspecial?.visible && (
         <div className="bg-[#2D1C14] text-white p-4 rounded-3xl border border-[#4A3225] shadow-[0_8px_24px_rgba(45,28,20,0.2)] flex items-center justify-between gap-3 animate-fade-in">
           <div className="flex items-center gap-3">
-            <span className="text-2xl">⚡</span>
+            <IconBolt className="w-5 h-5 text-amber-500 shrink-0" />
             <p className="text-xs sm:text-sm font-bold tracking-tight text-[#FAF7F4]">
               {notificacionEspecial.mensaje}
             </p>
@@ -439,7 +441,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
         <div>
           <div className="flex items-center gap-2">
             <span className="w-8 h-8 rounded-xl bg-[#FAF5F0] border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center text-base font-bold shadow-2xs">
-              🏋️‍♂️
+              <IconDumbbell className="w-4 h-4" />
             </span>
             <h2 className="text-xl md:text-2xl font-black text-[#2D1C14] tracking-tight">
               Training Tracker Semanal

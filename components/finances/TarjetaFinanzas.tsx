@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import Modal from '@/components/ui/Modal';
 import { limpiarConceptoGasto } from '@/types';
 import { sumarUnMesMismaFecha, formatearFechaBonita } from '@/lib/dateUtils';
+import { IconEdit, IconTrash, IconCheck } from '@/components/ui/Icons';
 import type { Gasto, CuotaAporte, UserSession } from '@/types';
 
 interface TarjetaFinanzasProps {
@@ -249,17 +250,17 @@ export default function TarjetaFinanzas({
                 setEditFecha(gasto.fecha_vencimiento || '');
                 setModalEditarGasto(true);
               }}
-              className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-[#2D1C14] hover:bg-[#FAF5F0] flex items-center justify-center transition-colors text-xs active:scale-90"
+              className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-[#2D1C14] hover:bg-[#FAF5F0] flex items-center justify-center transition-colors active:scale-90"
               title="Editar"
             >
-              ✏️
+              <IconEdit className="w-3.5 h-3.5" />
             </button>
             <button 
               onClick={() => setModalEliminarGasto(true)}
-              className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors text-xs active:scale-90"
+              className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors active:scale-90"
               title="Eliminar"
             >
-              🗑️
+              <IconTrash className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -392,18 +393,18 @@ export default function TarjetaFinanzas({
                         <button 
                           type="button"
                           onClick={() => iniciarEdicionAporte(ap)} 
-                          className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-[#2D1C14] hover:bg-white flex items-center justify-center transition-colors text-xs active:scale-90 border border-transparent hover:border-[#EADBCE]"
+                          className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-[#2D1C14] hover:bg-white flex items-center justify-center transition-colors active:scale-90 border border-transparent hover:border-[#EADBCE]"
                           title="Editar persona y monto"
                         >
-                          ✏️
+                          <IconEdit className="w-3.5 h-3.5" />
                         </button>
                         <button 
                           type="button"
                           onClick={() => eliminarAporte(ap.id)} 
-                          className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors text-xs active:scale-90 border border-transparent hover:border-rose-200"
+                          className="w-7 h-7 rounded-lg text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors active:scale-90 border border-transparent hover:border-rose-200"
                           title="Eliminar aporte"
                         >
-                          🗑️
+                          <IconTrash className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
