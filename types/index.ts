@@ -211,7 +211,7 @@ export function extraerCompraDeGasto(gasto: Gasto): CompraHistorial | null {
 
 export interface NavItem {
   id: TabType;
-  icon: string;
+  icon?: string;
   label: string;
 }
 

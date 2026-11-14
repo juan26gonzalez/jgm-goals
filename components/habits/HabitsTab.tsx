@@ -15,7 +15,14 @@ import {
   IconFlame, 
   IconSunrise, 
   IconSun, 
-  IconMoon 
+  IconMoon,
+  IconClock,
+  IconCheck,
+  IconRotateCcw,
+  IconSparkles,
+  IconCalendar,
+  HABIT_ICON_OPTIONS,
+  HabitIcon
 } from '@/components/ui/Icons';
 import type { Habito, HabitoRegistro, UserSession, BloqueHabito } from '@/types';
 
@@ -29,7 +36,6 @@ interface HabitsTabProps {
 }
 
 const diasSemanaOpciones = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
-const emojisComunes = ['🏃‍♂️', '💧', '📚', '🏋️‍♂️', '🍎', '🍳', '💤', '💻', '🧘‍♂️', '🧹', '📖', '🚴‍♂️', '💊', '💰', '🚿', '🚗'];
 
 const bloqueConfig: Record<string, { icon: React.ReactNode; bgTag: string; textTag: string }> = {
   'Mañana': { icon: <IconSunrise className="w-4 h-4 text-[#8D6B57]" />, bgTag: 'bg-[#FAF5F0]', textTag: 'text-[#4A3225]' },
@@ -81,7 +87,7 @@ export default function HabitsTab({
   // Formulario de creación
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [nuevoHabitoNombre, setNuevoHabitoNombre] = useState('');
-  const [nuevoHabitoEmoji, setNuevoHabitoEmoji] = useState('🏃‍♂️');
+  const [nuevoHabitoEmoji, setNuevoHabitoEmoji] = useState('running');
   const [nuevoHabitoHoraInicio, setNuevoHabitoHoraInicio] = useState(''); 
   const [nuevoHabitoHoraFin, setNuevoHabitoHoraFin] = useState(''); 
   const [nuevoHabitoBloque, setNuevoHabitoBloque] = useState<BloqueHabito>('Mañana');
@@ -304,7 +310,7 @@ export default function HabitsTab({
     : [filtroBloque];
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-6">
+    <div className="w-full max-w-[1680px] mx-auto animate-fade-in space-y-6">
       
       {/* Selector de Submódulo: Targets Diarios vs Training Tracker vs Nutrición MFP */}
       <div className="flex flex-wrap items-center gap-1.5 bg-[#FAF5F0] p-1.5 rounded-2xl border border-[#EADBCE]/80 text-xs font-bold w-fit shadow-2xs">
@@ -393,16 +399,18 @@ export default function HabitsTab({
             <button
               type="button"
               onClick={() => setFechaActiva(strHoy)}
-              className={`px-3 py-1.5 rounded-lg transition-all ${fechaActiva === strHoy ? 'bg-[#2D1C14] text-white shadow-xs' : 'text-[#8D6B57] hover:text-[#2D1C14]'}`}
+              className={`px-3 py-1.5 rounded-lg transition-all inline-flex items-center gap-1.5 ${fechaActiva === strHoy ? 'bg-[#2D1C14] text-white shadow-xs' : 'text-[#8D6B57] hover:text-[#2D1C14]'}`}
             >
-              ✨ Hoy
+              <IconSparkles className="w-3.5 h-3.5" />
+              <span>Hoy</span>
             </button>
             <button
               type="button"
               onClick={() => setFechaActiva(fechaAyer)}
-              className={`px-3 py-1.5 rounded-lg transition-all ${fechaActiva === fechaAyer ? 'bg-[#2D1C14] text-white shadow-xs' : 'text-[#8D6B57] hover:text-[#2D1C14]'}`}
+              className={`px-3 py-1.5 rounded-lg transition-all inline-flex items-center gap-1.5 ${fechaActiva === fechaAyer ? 'bg-[#2D1C14] text-white shadow-xs' : 'text-[#8D6B57] hover:text-[#2D1C14]'}`}
             >
-              ⏪ Ayer
+              <IconRotateCcw className="w-3.5 h-3.5" />
+              <span>Ayer</span>
             </button>
           </div>
 
@@ -411,10 +419,11 @@ export default function HabitsTab({
             <button
               type="button"
               onClick={() => setSoloProgramadosDia(true)}
-              className={`px-3 py-1.5 rounded-lg transition-all ${soloProgramadosDia ? 'bg-[#2D1C14] text-white shadow-xs' : 'text-[#8D6B57] hover:text-[#2D1C14]'}`}
+              className={`px-3 py-1.5 rounded-lg transition-all inline-flex items-center gap-1.5 ${soloProgramadosDia ? 'bg-[#2D1C14] text-white shadow-xs' : 'text-[#8D6B57] hover:text-[#2D1C14]'}`}
               title={`Mostrar solo targets asignados para ${nombreDiaCompleto} (${diaSemanaActivo})`}
             >
-              🗓️ Solo {diaSemanaActivo} ({habitosCatalogo.filter(habitoAsignadoEsteDia).length})
+              <IconCalendar className="w-3.5 h-3.5" />
+              <span>Solo {diaSemanaActivo} ({habitosCatalogo.filter(habitoAsignadoEsteDia).length})</span>
             </button>
             <button
               type="button"
@@ -444,7 +453,9 @@ export default function HabitsTab({
       {/* Banner informativo de día activo y filtro */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-[#8D6B57] bg-[#FAF5F0] p-3 rounded-2xl border border-[#EADBCE]/80 gap-2 shadow-2xs animate-fade-in">
         <div className="flex items-center gap-2">
-          <span className="text-base">{esAyer ? '⏪' : '🎯'}</span>
+          <span className="w-6 h-6 rounded-lg bg-white border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center shrink-0">
+            {esAyer ? <IconRotateCcw className="w-3.5 h-3.5" /> : <IconTarget className="w-3.5 h-3.5" />}
+          </span>
           <span>
             Targets de <strong>{esAyer ? 'Ayer' : 'Hoy'} ({nombreDiaCompleto}, {fechaActiva})</strong>: {soloProgramadosDia ? `${habitosFiltradosPorDia.length} asignados a este día` : `mostrando los ${habitosCatalogo.length} de la semana`}
           </span>
@@ -463,42 +474,42 @@ export default function HabitsTab({
       {/* Formulario Desplegable */}
       {mostrarFormulario && (
         <form onSubmit={agregarHabito} className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 animate-fade-in space-y-5">
-          <h3 className="text-lg font-bold text-[#2D1C14] flex items-center gap-2">🎯 Programar Nuevo Target</h3>
+          <h3 className="text-lg font-bold text-[#2D1C14] flex items-center gap-2">
+            <span className="w-8 h-8 rounded-xl bg-[#FAF5F0] border border-[#EADBCE] flex items-center justify-center">
+              <IconTarget className="w-4 h-4 text-[#2D1C14]" />
+            </span>
+            <span>Programar Nuevo Target</span>
+          </h3>
           
           <div className="bg-[#FAF5F0] p-4 rounded-2xl border border-[#EADBCE]/70">
-            <p className="text-xs font-bold text-[#8D6B57] uppercase tracking-wider mb-2.5">1. Selecciona un ícono:</p>
+            <p className="text-xs font-bold text-[#8D6B57] uppercase tracking-wider mb-3">1. Selecciona un ícono:</p>
             <div className="flex flex-wrap gap-2">
-              {emojisComunes.map(emoji => (
+              {HABIT_ICON_OPTIONS.map(opt => (
                 <button 
-                  key={emoji} 
+                  key={opt.id} 
                   type="button" 
-                  onClick={() => setNuevoHabitoEmoji(emoji)} 
-                  className={`text-xl w-10 h-10 rounded-xl transition-all border flex items-center justify-center active:scale-90 ${nuevoHabitoEmoji === emoji ? 'bg-white border-[#2D1C14] shadow-xs scale-105' : 'bg-transparent border-transparent hover:bg-[#EADBCE]/40'}`}
+                  onClick={() => setNuevoHabitoEmoji(opt.id)} 
+                  title={opt.label}
+                  className={`w-10 h-10 rounded-xl transition-all border flex items-center justify-center active:scale-90 ${nuevoHabitoEmoji === opt.id ? 'bg-[#2D1C14] text-white border-[#2D1C14] shadow-xs scale-105' : 'bg-white/80 text-[#6F4A39] border-[#EADBCE]/60 hover:bg-white hover:text-[#2D1C14]'}`}
                 >
-                  {emoji}
+                  <HabitIcon value={opt.id} className="w-4 h-4" />
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <input 
-              type="text" 
-              placeholder="Emoji" 
-              value={nuevoHabitoEmoji} 
-              onChange={(e) => setNuevoHabitoEmoji(e.target.value)} 
-              className="p-3 border border-[#EADBCE] rounded-xl text-[#2D1C14] text-xl text-center bg-[#FAF5F0]/50 outline-none focus:bg-white focus:border-[#2D1C14]" 
-              required 
-            />
-            <input 
-              type="text" 
-              placeholder="Nombre del target..." 
-              value={nuevoHabitoNombre} 
-              onChange={(e) => setNuevoHabitoNombre(e.target.value)} 
-              className="p-3 border border-[#EADBCE] rounded-xl text-[#2D1C14] font-bold bg-[#FAF5F0]/50 outline-none focus:bg-white focus:border-[#2D1C14] text-sm" 
-              required 
-            />
-            <div className="flex gap-1.5 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+            <div className="md:col-span-5">
+              <input 
+                type="text" 
+                placeholder="Nombre del target..." 
+                value={nuevoHabitoNombre} 
+                onChange={(e) => setNuevoHabitoNombre(e.target.value)} 
+                className="w-full p-3 border border-[#EADBCE] rounded-xl text-[#2D1C14] font-bold bg-[#FAF5F0]/50 outline-none focus:bg-white focus:border-[#2D1C14] text-sm" 
+                required 
+              />
+            </div>
+            <div className="md:col-span-4 flex gap-1.5 items-center">
               <input 
                 type="time" 
                 title="Hora de inicio"
@@ -518,15 +529,17 @@ export default function HabitsTab({
                 className="w-1/2 p-3 border border-[#EADBCE] rounded-xl text-[#2D1C14] font-bold bg-[#FAF5F0]/50 outline-none focus:bg-white focus:border-[#2D1C14] text-sm" 
               />
             </div>
-            <select 
-              value={nuevoHabitoBloque} 
-              onChange={(e) => setNuevoHabitoBloque(e.target.value as BloqueHabito)} 
-              className="p-3 border border-[#EADBCE] rounded-xl text-[#2D1C14] font-bold bg-[#FAF5F0]/50 outline-none focus:bg-white focus:border-[#2D1C14] text-sm"
-            >
-              <option value="Mañana">🌅 Mañana</option>
-              <option value="Tarde">☀️ Tarde</option>
-              <option value="Noche">🌙 Noche</option>
-            </select>
+            <div className="md:col-span-3">
+              <select 
+                value={nuevoHabitoBloque} 
+                onChange={(e) => setNuevoHabitoBloque(e.target.value as BloqueHabito)} 
+                className="w-full p-3 border border-[#EADBCE] rounded-xl text-[#2D1C14] font-bold bg-[#FAF5F0]/50 outline-none focus:bg-white focus:border-[#2D1C14] text-sm"
+              >
+                <option value="Mañana">Mañana</option>
+                <option value="Tarde">Tarde</option>
+                <option value="Noche">Noche</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -565,15 +578,16 @@ export default function HabitsTab({
             <div key={bloque} className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between">
               <div>
                 <h4 className="text-base font-extrabold text-[#2D1C14] mb-4 flex items-center gap-2">
-                  <span className="text-xl">{config?.icon}</span> {bloque}
+                  <span className="w-8 h-8 rounded-xl bg-[#FAF5F0] border border-[#EADBCE] flex items-center justify-center">{config?.icon}</span>
+                  <span>{bloque}</span>
                   <span className="text-[10px] font-bold text-[#8D6B57] ml-auto bg-[#FAF5F0] px-2.5 py-0.5 rounded-full border border-[#EADBCE]/60">
                     {habitosBloque.length}
                   </span>
                 </h4>
                 
-                <ul className="space-y-3">
+                <ul className={filtroBloque === 'Todos' ? 'space-y-3' : 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5'}>
                   {habitosBloque.length === 0 && (
-                    <p className="text-xs font-medium text-[#8D6B57] p-6 border border-dashed border-[#EADBCE] rounded-2xl text-center">
+                    <p className="text-xs font-medium text-[#8D6B57] p-6 border border-dashed border-[#EADBCE] rounded-2xl text-center col-span-full">
                       {soloProgramadosDia 
                         ? `Sin targets asignados para ${esAyer ? 'ayer' : 'hoy'} (${nombreDiaCompleto}) en este bloque`
                         : 'Sin targets en este bloque'
@@ -599,7 +613,9 @@ export default function HabitsTab({
                             title={completadoDia ? (esAyer ? 'Desmarcar ayer' : 'Desmarcar hoy') : (esAyer ? 'Marcar ayer como completado' : 'Marcar como completado')}
                           >
                             {completadoDia ? (
-                              <span className="w-7 h-7 rounded-lg bg-[#2D1C14] text-white flex items-center justify-center font-bold text-sm shadow-xs">✓</span>
+                              <span className="w-7 h-7 rounded-lg bg-[#2D1C14] text-white flex items-center justify-center shadow-xs">
+                                <IconCheck className="w-4 h-4" strokeWidth={2.5} />
+                              </span>
                             ) : (
                               <div className="w-7 h-7 rounded-lg border-2 border-[#EADBCE] hover:border-[#2D1C14] flex items-center justify-center transition-colors"></div>
                             )}
@@ -607,16 +623,18 @@ export default function HabitsTab({
 
                           <div className="flex flex-col flex-grow min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-lg">{habito.emoji}</span>
+                              <span className="w-7 h-7 rounded-lg bg-[#FAF5F0] border border-[#EADBCE]/80 text-[#2D1C14] flex items-center justify-center shrink-0">
+                                <HabitIcon value={habito.emoji} className="w-4 h-4" />
+                              </span>
                               <span className={`font-bold text-sm truncate ${completadoDia ? 'text-[#8D6B57] line-through' : 'text-[#2D1C14]'}`}>
                                 {habito.nombre}
                               </span>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            <div className="flex flex-wrap items-center gap-1.5 mt-2">
                               {habito.hora && (
                                 <span className="text-[10px] font-bold text-[#4A3225] bg-[#FAF5F0] px-2.5 py-0.5 rounded-md border border-[#EADBCE]/80 flex items-center gap-1 shadow-2xs">
-                                  <span>⏰</span>
+                                  <IconClock className="w-3 h-3 text-[#8D6B57]" />
                                   {habito.hora.includes(' - ') ? (
                                     <span>
                                       Inicio: <strong className="text-[#2D1C14]">{habito.hora.split(' - ')[0]}</strong> • Fin: <strong className="text-[#2D1C14]">{habito.hora.split(' - ')[1]}</strong>
@@ -674,7 +692,7 @@ export default function HabitsTab({
                               {circulosDias.map((item, idx) => (
                                 <span 
                                   key={idx} 
-                                  title={`${item.dia}: ${item.completado ? 'Completado ✔' : 'Pendiente'}`}
+                                  title={`${item.dia}: ${item.completado ? 'Completado' : 'Pendiente'}`}
                                   className={`w-2.5 h-2.5 rounded-full transition-all ${item.completado ? 'bg-[#2D1C14] scale-105 shadow-2xs' : 'bg-[#EADBCE]'}`}
                                 ></span>
                               ))}
@@ -710,17 +728,24 @@ export default function HabitsTab({
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
-              <div className="sm:col-span-1">
-                <label className="text-xs font-bold text-[#8D6B57] uppercase tracking-wider block mb-1">Emoji</label>
-                <input 
-                  type="text" 
-                  value={editEmoji} 
-                  onChange={(e) => setEditEmoji(e.target.value)} 
-                  className="w-full p-3 border border-[#EADBCE] rounded-xl bg-[#FAF5F0]/50 text-center text-xl outline-none" 
-                  required 
-                />
+            <div>
+              <label className="text-xs font-bold text-[#8D6B57] uppercase tracking-wider block mb-2">Ícono</label>
+              <div className="flex flex-wrap gap-1.5 bg-[#FAF5F0] p-2.5 rounded-xl border border-[#EADBCE]/80">
+                {HABIT_ICON_OPTIONS.map(opt => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setEditEmoji(opt.id)}
+                    title={opt.label}
+                    className={`w-9 h-9 rounded-lg transition-all border flex items-center justify-center active:scale-90 ${editEmoji === opt.id ? 'bg-[#2D1C14] text-white border-[#2D1C14] shadow-xs' : 'bg-white text-[#6F4A39] border-[#EADBCE]/60 hover:text-[#2D1C14]'}`}
+                  >
+                    <HabitIcon value={opt.id} className="w-4 h-4" />
+                  </button>
+                ))}
               </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="sm:col-span-2">
                 <label className="text-xs font-bold text-[#8D6B57] uppercase tracking-wider block mb-1">Horario (Inicio - Fin)</label>
                 <div className="flex gap-1.5 items-center">
@@ -800,8 +825,12 @@ export default function HabitsTab({
           title="Eliminar Target"
         >
           <div className="space-y-4">
-            <p className="text-sm text-[#6F4A39]">
-              ¿Estás seguro de que deseas eliminar el target <strong className="text-[#2D1C14]">{habitoAEliminar.emoji} {habitoAEliminar.nombre}</strong>?
+            <p className="text-sm text-[#6F4A39] flex items-center gap-1.5 flex-wrap">
+              <span>¿Estás seguro de que deseas eliminar el target</span>
+              <strong className="text-[#2D1C14] inline-flex items-center gap-1.5 bg-[#FAF5F0] px-2 py-0.5 rounded-lg border border-[#EADBCE]">
+                <HabitIcon value={habitoAEliminar.emoji} className="w-4 h-4" />
+                <span>{habitoAEliminar.nombre}</span>
+              </strong>?
             </p>
             <p className="text-xs text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-200">
               Esta acción eliminará el target y todo su historial de registros pasados de forma permanente.

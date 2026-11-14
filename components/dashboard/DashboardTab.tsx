@@ -7,7 +7,13 @@ import {
   IconWallet, 
   IconShoppingBag, 
   IconCreditCard, 
-  IconCheck 
+  IconCheck,
+  IconChevronLeft,
+  IconChevronRight,
+  IconRotateCcw,
+  IconSparkles,
+  IconClock,
+  HabitIcon
 } from '@/components/ui/Icons';
 import type { Gasto, MercadoItem, Habito, HabitoRegistro, CompraHistorial } from '@/types';
 
@@ -94,7 +100,7 @@ export default function DashboardTab({
       <div 
         key={d} 
         onClick={() => setDiaSeleccionado(fechaIteracion)}
-        className={`p-2 md:p-3 min-h-[105px] border rounded-2xl transition-all flex flex-col cursor-pointer ${
+        className={`p-2.5 md:p-3.5 min-h-[108px] md:min-h-[132px] border rounded-2xl transition-all flex flex-col cursor-pointer ${
           esHoy 
             ? 'bg-[#FAF5F0] border-[#2D1C14] shadow-xs ring-1 ring-[#2D1C14]/10' 
             : 'bg-white border-[#EADBCE]/80 hover:border-[#B39380] hover:shadow-xs'
@@ -139,12 +145,12 @@ export default function DashboardTab({
                 }`}
                 title={`${h.nombre} (${h.hora || h.bloque}) - ${completado ? 'Completado' : 'Pendiente'}`}
               >
-                <span className="truncate flex items-center gap-1">
-                  <span>{h.emoji}</span>
+                <span className="truncate flex items-center gap-1.5">
+                  <HabitIcon value={h.emoji} className="w-3 h-3 text-[#6F4A39] shrink-0" />
                   <span className={`truncate ${completado ? 'line-through opacity-75' : ''}`}>{h.nombre}</span>
                 </span>
                 {completado ? (
-                  <span className="text-[9px] text-[#2D1C14] font-black shrink-0">✓</span>
+                  <IconCheck className="w-3 h-3 text-[#2D1C14] shrink-0" strokeWidth={2.5} />
                 ) : (
                   <span className="text-[8px] text-[#8D6B57] font-semibold shrink-0">
                     {h.hora ? (h.hora.includes(' - ') ? h.hora.split(' - ')[0] : h.hora) : ''}
@@ -189,10 +195,10 @@ export default function DashboardTab({
   })();
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-6">
+    <div className="w-full max-w-[1680px] mx-auto animate-fade-in space-y-6">
       
       {/* KPI Cards Superiores en Marrón Elegante y Blanco */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
           <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
             <IconTarget className="w-6 h-6" />
@@ -273,9 +279,10 @@ export default function DashboardTab({
                   setMesActual(m => m - 1); 
                 } 
               }} 
-              className="px-3.5 py-1.5 bg-white rounded-xl shadow-2xs text-[#2D1C14] active:scale-95 transition-all"
+              aria-label="Mes anterior"
+              className="px-3 py-1.5 bg-white rounded-xl shadow-2xs text-[#2D1C14] active:scale-95 transition-all flex items-center justify-center"
             >
-              ◀
+              <IconChevronLeft className="w-4 h-4" />
             </button>
             <button 
               type="button"
@@ -283,10 +290,11 @@ export default function DashboardTab({
                 const fechaAyer = sumarDiasFechaStr(strHoy, -1);
                 setDiaSeleccionado(fechaAyer);
               }} 
-              className="px-3.5 py-1.5 bg-white hover:bg-[#FAF5F0] text-[#6F4A39] hover:text-[#2D1C14] rounded-xl shadow-2xs active:scale-95 transition-all flex items-center gap-1 border border-[#EADBCE]/60"
+              className="px-3.5 py-1.5 bg-white hover:bg-[#FAF5F0] text-[#6F4A39] hover:text-[#2D1C14] rounded-xl shadow-2xs active:scale-95 transition-all flex items-center gap-1.5 border border-[#EADBCE]/60"
               title="Abrir y editar actividades de ayer"
             >
-              <span>⏪</span> Ayer
+              <IconRotateCcw className="w-3.5 h-3.5" />
+              <span>Ayer</span>
             </button>
             <button 
               onClick={() => { 
@@ -307,18 +315,19 @@ export default function DashboardTab({
                   setMesActual(m => m + 1); 
                 } 
               }} 
-              className="px-3.5 py-1.5 bg-white rounded-xl shadow-2xs text-[#2D1C14] active:scale-95 transition-all"
+              aria-label="Mes siguiente"
+              className="px-3 py-1.5 bg-white rounded-xl shadow-2xs text-[#2D1C14] active:scale-95 transition-all flex items-center justify-center"
             >
-              ▶
+              <IconChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-7 gap-2 mb-2">
+        <div className="grid grid-cols-7 gap-2.5 mb-2">
           {diasSemana.map(dia => (
             <div key={dia} className="text-center font-bold text-[#8D6B57] text-xs uppercase tracking-wider">{dia}</div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-2">{celdasCalendario}</div>
+        <div className="grid grid-cols-7 gap-2.5">{celdasCalendario}</div>
       </div>
 
       {/* Modal de Detalle de Día */}
@@ -338,13 +347,26 @@ export default function DashboardTab({
                 className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#FAF5F0] text-[#2D1C14] font-bold border border-[#EADBCE]/60 flex items-center gap-1 active:scale-95 transition-all shadow-2xs"
                 title="Ir al día anterior"
               >
-                <span>◀</span> Anterior
+                <IconChevronLeft className="w-3.5 h-3.5" />
+                <span>Anterior</span>
               </button>
               <div className="text-center">
-                <span className="font-extrabold text-[#2D1C14] text-xs block">
-                  {diaSeleccionado === strHoy ? '✨ Hoy' : (diaSeleccionado === sumarDiasFechaStr(strHoy, -1) ? '⏪ Ayer' : infoDiaSeleccionado.fechaFormato)}
+                <span className="font-extrabold text-[#2D1C14] text-xs inline-flex items-center justify-center gap-1">
+                  {diaSeleccionado === strHoy ? (
+                    <>
+                      <IconSparkles className="w-3.5 h-3.5 text-[#8D6B57]" />
+                      <span>Hoy</span>
+                    </>
+                  ) : diaSeleccionado === sumarDiasFechaStr(strHoy, -1) ? (
+                    <>
+                      <IconRotateCcw className="w-3.5 h-3.5 text-[#8D6B57]" />
+                      <span>Ayer</span>
+                    </>
+                  ) : (
+                    infoDiaSeleccionado.fechaFormato
+                  )}
                 </span>
-                <span className="text-[10px] text-[#8D6B57] font-semibold">
+                <span className="text-[10px] text-[#8D6B57] font-semibold block">
                   {diaSeleccionado}
                 </span>
               </div>
@@ -354,7 +376,8 @@ export default function DashboardTab({
                 className="px-3 py-1.5 rounded-xl bg-white hover:bg-[#FAF5F0] text-[#2D1C14] font-bold border border-[#EADBCE]/60 flex items-center gap-1 active:scale-95 transition-all shadow-2xs"
                 title="Ir al día siguiente"
               >
-                Siguiente <span>▶</span>
+                <span>Siguiente</span>
+                <IconChevronRight className="w-3.5 h-3.5" />
               </button>
             </div>
             
@@ -362,7 +385,8 @@ export default function DashboardTab({
             <div>
               <div className="flex justify-between items-center mb-2.5">
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#8D6B57] flex items-center gap-1.5">
-                  <span>🎯</span> Targets Programados ({infoDiaSeleccionado.registrosDia.length} / {infoDiaSeleccionado.programadosDia.length})
+                  <IconTarget className="w-3.5 h-3.5" />
+                  <span>Targets Programados ({infoDiaSeleccionado.registrosDia.length} / {infoDiaSeleccionado.programadosDia.length})</span>
                 </h4>
                 {diaSeleccionado === sumarDiasFechaStr(strHoy, -1) && (
                   <span className="text-[10px] font-bold text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
@@ -395,7 +419,9 @@ export default function DashboardTab({
                             title={completado ? 'Marcar como pendiente' : 'Marcar como completado'}
                           >
                             {completado ? (
-                              <span className="w-7 h-7 rounded-lg bg-[#2D1C14] text-white flex items-center justify-center font-bold text-sm shadow-xs">✓</span>
+                              <span className="w-7 h-7 rounded-lg bg-[#2D1C14] text-white flex items-center justify-center shadow-xs">
+                                <IconCheck className="w-4 h-4" strokeWidth={2.5} />
+                              </span>
                             ) : (
                               <div className="w-7 h-7 rounded-lg border-2 border-[#EADBCE] hover:border-[#2D1C14] flex items-center justify-center transition-colors"></div>
                             )}
@@ -403,7 +429,9 @@ export default function DashboardTab({
 
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-lg">{h.emoji}</span>
+                              <span className="w-6 h-6 rounded-lg bg-[#FAF5F0] border border-[#EADBCE]/80 text-[#2D1C14] flex items-center justify-center shrink-0">
+                                <HabitIcon value={h.emoji} className="w-3.5 h-3.5" />
+                              </span>
                               <span className={`font-bold text-sm truncate ${completado ? 'text-[#8D6B57] line-through' : 'text-[#2D1C14]'}`}>
                                 {h.nombre}
                               </span>
@@ -413,7 +441,7 @@ export default function DashboardTab({
                             <div className="flex flex-wrap items-center gap-1.5 mt-1">
                               {h.hora ? (
                                 <span className="text-[10px] font-bold text-[#4A3225] bg-white px-2 py-0.5 rounded-md border border-[#EADBCE]/80 flex items-center gap-1 shadow-2xs">
-                                  <span>⏰</span>
+                                  <IconClock className="w-3 h-3 text-[#8D6B57]" />
                                   {h.hora.includes(' - ') ? (
                                     <span>
                                       Inicio: <strong className="text-[#2D1C14]">{h.hora.split(' - ')[0]}</strong> • Fin: <strong className="text-[#2D1C14]">{h.hora.split(' - ')[1]}</strong>
@@ -442,13 +470,20 @@ export default function DashboardTab({
                         <button 
                           type="button"
                           onClick={() => onMarcarHabito(h.id, diaSeleccionado)}
-                          className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all active:scale-95 shrink-0 ${
+                          className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition-all active:scale-95 shrink-0 inline-flex items-center gap-1 ${
                             completado 
                               ? 'bg-[#2D1C14] text-white border-[#2D1C14] shadow-xs' 
                               : 'bg-[#FAF5F0] text-[#6F4A39] border-[#EADBCE] hover:border-[#2D1C14]'
                           }`}
                         >
-                          {completado ? 'Listo ✔' : 'Completar'}
+                          {completado ? (
+                            <>
+                              <span>Listo</span>
+                              <IconCheck className="w-3.5 h-3.5" />
+                            </>
+                          ) : (
+                            'Completar'
+                          )}
                         </button>
                       </li>
                     );
@@ -460,7 +495,8 @@ export default function DashboardTab({
             {/* Gastos con vencimiento este día */}
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#8D6B57] mb-2 flex items-center gap-1.5">
-                <span>💳</span> Compromisos Financieros
+                <IconCreditCard className="w-3.5 h-3.5" />
+                <span>Compromisos Financieros</span>
               </h4>
               {infoDiaSeleccionado.gastosDia.length === 0 ? (
                 <p className="text-xs text-[#8D6B57] bg-[#FAF5F0] p-3 rounded-xl border border-[#EADBCE]">Sin vencimientos para esta fecha.</p>
@@ -482,7 +518,8 @@ export default function DashboardTab({
             {/* Compras de supermercado este día (guardadas y activas) */}
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#8D6B57] mb-2 flex items-center gap-1.5">
-                <span>🛒</span> Compras de Mercado Guardadas ({infoDiaSeleccionado.comprasGuardadasDia.length})
+                <IconShoppingBag className="w-3.5 h-3.5" />
+                <span>Compras de Mercado Guardadas ({infoDiaSeleccionado.comprasGuardadasDia.length})</span>
               </h4>
               {infoDiaSeleccionado.comprasGuardadasDia.length === 0 && infoDiaSeleccionado.comprasDia.length === 0 ? (
                 <p className="text-xs text-[#8D6B57] bg-[#FAF5F0] p-3 rounded-xl border border-[#EADBCE]">Sin compras registradas en esta fecha.</p>
@@ -491,7 +528,10 @@ export default function DashboardTab({
                   {infoDiaSeleccionado.comprasGuardadasDia.map(c => (
                     <div key={c.id} className="p-3 bg-[#FAF5F0] border border-[#EADBCE] rounded-2xl text-xs space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-[#2D1C14] text-sm">🛍️ {c.nombre}</span>
+                        <span className="font-bold text-[#2D1C14] text-sm inline-flex items-center gap-1.5">
+                          <IconShoppingBag className="w-3.5 h-3.5 text-[#8D6B57]" />
+                          <span>{c.nombre}</span>
+                        </span>
                         <span className="font-extrabold text-[#2D1C14] text-sm">${Number(c.total).toLocaleString('es-CO')}</span>
                       </div>
                       <div className="text-[11px] text-[#6F4A39] flex flex-wrap gap-1">

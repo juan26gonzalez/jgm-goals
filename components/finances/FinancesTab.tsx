@@ -19,7 +19,10 @@ import {
   IconPlus, 
   IconX, 
   IconSparkles,
-  IconRefresh 
+  IconRefresh,
+  IconFolder,
+  IconRotateCcw,
+  IconTrash
 } from '@/components/ui/Icons';
 import type { Gasto, CuotaAporte, UserSession, PagoCubierto, AporteDetalle } from '@/types';
 
@@ -246,7 +249,7 @@ export default function FinancesTab({
       .eq('gasto_id', gasto.id);
 
     // 5. Notificación y recarga
-    setNotificacionToast(`🎉 "${limpiarConceptoGasto(gasto.concepto)}" fue guardado en Pagos Cubiertos y programado para el ${formatearFechaBonita(proximaFecha)}.`);
+    setNotificacionToast(`"${limpiarConceptoGasto(gasto.concepto)}" fue guardado en Pagos Cubiertos y programado para el ${formatearFechaBonita(proximaFecha)}.`);
     setTimeout(() => setNotificacionToast(null), 6000);
 
     onGastoAgregado();
@@ -375,7 +378,7 @@ export default function FinancesTab({
   const totalHistoricoCubiertos = pagosCubiertosFiltrados.reduce((sum, p) => sum + p.monto_total, 0);
 
   return (
-    <div className="max-w-5xl mx-auto animate-fade-in space-y-6">
+    <div className="w-full max-w-[1680px] mx-auto animate-fade-in space-y-6">
       
       {/* Toast de Notificación */}
       {notificacionToast && (
@@ -464,8 +467,10 @@ export default function FinancesTab({
           {/* Banner de Compromisos 100% Cubiertos listos para renovar */}
           {gastosCubiertosPendientesRenovar.length > 0 && (
             <div className="bg-emerald-50/90 border border-emerald-200/90 text-emerald-950 p-4 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 shadow-2xs animate-fade-in">
-              <div className="flex items-start sm:items-center gap-2.5">
-                <span className="text-2xl shrink-0">✨</span>
+              <div className="flex items-start sm:items-center gap-3">
+                <span className="w-9 h-9 rounded-xl bg-white border border-emerald-200 text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
+                  <IconSparkles className="w-5 h-5" />
+                </span>
                 <div>
                   <p className="text-sm font-black text-emerald-950">
                     Tienes {gastosCubiertosPendientesRenovar.length} {gastosCubiertosPendientesRenovar.length === 1 ? 'pago cubierto' : 'pagos cubiertos'} al 100% este mes
@@ -487,107 +492,115 @@ export default function FinancesTab({
             </div>
           )}
 
-          {/* Distribución del Presupuesto Total */}
-          {gastosActivos.length > 0 && (
-            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-1">
-                Distribución del Presupuesto Activo
-              </span>
-              <p className="text-3xl md:text-4xl font-extrabold text-[#2D1C14] mb-6 tracking-tight">
-                ${totalGastosMes.toLocaleString('es-CO')}
-              </p>
-              
-              <div className="w-full h-3 rounded-full flex overflow-hidden mb-4 bg-[#FAF5F0]">
-                {Object.entries(categoriasGastos).map(([cat, montoCat], i) => {
-                  const valorMonto = Number(montoCat) || 0;
-                  return (
-                    <div 
-                      key={cat} 
-                      title={`${cat}: $${valorMonto.toLocaleString()}`} 
-                      className={`h-full transition-all duration-700 ${coloresCategorias[i % coloresCategorias.length]}`} 
-                      style={{ width: `${totalGastosMes > 0 ? (valorMonto / totalGastosMes) * 100 : 0}%` }}
-                    ></div>
-                  );
-                })}
-              </div>
-              
-              <div className="flex flex-wrap gap-2">
-                {Object.entries(categoriasGastos).map(([cat, montoCat], i) => {
-                  const valorMonto = Number(montoCat) || 0;
-                  return (
-                    <div key={cat} className="flex items-center gap-1.5 text-xs font-bold text-[#4A3225] bg-[#FAF5F0] px-2.5 py-1 rounded-lg border border-[#EADBCE]/60">
-                      <span className={`w-2 h-2 rounded-full ${coloresCategorias[i % coloresCategorias.length]}`}></span>
-                      {cat} <span className="text-[#8D6B57] font-medium ml-0.5">{totalGastosMes > 0 ? ((valorMonto / totalGastosMes) * 100).toFixed(0) : 0}%</span>
+          {(gastosActivos.length > 0 || personasOrdenadas.length > 0) && (
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
+              {/* Distribución del Presupuesto Total */}
+              {gastosActivos.length > 0 && (
+                <div className={`${personasOrdenadas.length > 0 ? 'xl:col-span-5' : 'xl:col-span-12'} bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 flex flex-col justify-between`}>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-1">
+                      Distribución del Presupuesto Activo
+                    </span>
+                    <p className="text-3xl md:text-4xl font-extrabold text-[#2D1C14] mb-6 tracking-tight">
+                      ${totalGastosMes.toLocaleString('es-CO')}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <div className="w-full h-3 rounded-full flex overflow-hidden mb-4 bg-[#FAF5F0]">
+                      {Object.entries(categoriasGastos).map(([cat, montoCat], i) => {
+                        const valorMonto = Number(montoCat) || 0;
+                        return (
+                          <div 
+                            key={cat} 
+                            title={`${cat}: $${valorMonto.toLocaleString()}`} 
+                            className={`h-full transition-all duration-700 ${coloresCategorias[i % coloresCategorias.length]}`} 
+                            style={{ width: `${totalGastosMes > 0 ? (valorMonto / totalGastosMes) * 100 : 0}%` }}
+                          ></div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Sumatoria Total por Integrante */}
-          {personasOrdenadas.length > 0 && (
-            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 space-y-5 animate-fade-in">
-              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                <div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-0.5">
-                    Total por Integrante
-                  </span>
-                  <h3 className="text-xl md:text-2xl font-extrabold text-[#2D1C14] tracking-tight">
-                    Sumatoria de Aportes
-                  </h3>
-                </div>
-                <div className="bg-[#FAF5F0] px-3.5 py-2 rounded-2xl border border-[#EADBCE]/60 flex items-center gap-2 self-start sm:self-auto">
-                  <span className="text-xs font-bold text-[#8D6B57]">Total Recaudado:</span>
-                  <span className="text-sm font-black text-[#2D1C14]">${totalAportadoGeneral.toLocaleString('es-CO')}</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-                {personasOrdenadas.map(([nombre, data]) => {
-                  const pct = totalAportadoGeneral > 0 ? (data.total / totalAportadoGeneral) * 100 : 0;
-                  return (
-                    <div 
-                      key={nombre} 
-                      className="p-4 rounded-2xl bg-[#FAF5F0]/60 border border-[#EADBCE]/80 hover:bg-white hover:border-[#D9C4B3] transition-all flex flex-col justify-between space-y-3"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="w-8 h-8 rounded-full bg-[#2D1C14] text-white flex items-center justify-center text-xs font-black shrink-0 shadow-2xs">
-                            {nombre.charAt(0).toUpperCase()}
+                    
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(categoriasGastos).map(([cat, montoCat], i) => {
+                        const valorMonto = Number(montoCat) || 0;
+                        return (
+                          <div key={cat} className="flex items-center gap-1.5 text-xs font-bold text-[#4A3225] bg-[#FAF5F0] px-2.5 py-1 rounded-lg border border-[#EADBCE]/60">
+                            <span className={`w-2 h-2 rounded-full ${coloresCategorias[i % coloresCategorias.length]}`}></span>
+                            {cat} <span className="text-[#8D6B57] font-medium ml-0.5">{totalGastosMes > 0 ? ((valorMonto / totalGastosMes) * 100).toFixed(0) : 0}%</span>
                           </div>
-                          <div className="min-w-0">
-                            <h4 className="text-sm font-extrabold text-[#2D1C14] truncate" title={nombre}>
-                              {nombre}
-                            </h4>
-                            <span className="text-[10px] font-bold text-[#8D6B57] block">
-                              {data.cuotasCount} {data.cuotasCount === 1 ? 'aporte' : 'aportes'} en {data.gastosIds.size} {data.gastosIds.size === 1 ? 'gasto' : 'gastos'}
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Sumatoria Total por Integrante */}
+              {personasOrdenadas.length > 0 && (
+                <div className={`${gastosActivos.length > 0 ? 'xl:col-span-7' : 'xl:col-span-12'} bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 space-y-5 animate-fade-in`}>
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-0.5">
+                        Total por Integrante
+                      </span>
+                      <h3 className="text-xl md:text-2xl font-extrabold text-[#2D1C14] tracking-tight">
+                        Sumatoria de Aportes
+                      </h3>
+                    </div>
+                    <div className="bg-[#FAF5F0] px-3.5 py-2 rounded-2xl border border-[#EADBCE]/60 flex items-center gap-2 self-start sm:self-auto">
+                      <span className="text-xs font-bold text-[#8D6B57]">Total Recaudado:</span>
+                      <span className="text-sm font-black text-[#2D1C14]">${totalAportadoGeneral.toLocaleString('es-CO')}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    {personasOrdenadas.map(([nombre, data]) => {
+                      const pct = totalAportadoGeneral > 0 ? (data.total / totalAportadoGeneral) * 100 : 0;
+                      return (
+                        <div 
+                          key={nombre} 
+                          className="p-4 rounded-2xl bg-[#FAF5F0]/60 border border-[#EADBCE]/80 hover:bg-white hover:border-[#D9C4B3] transition-all flex flex-col justify-between space-y-3"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div className="w-8 h-8 rounded-full bg-[#2D1C14] text-white flex items-center justify-center text-xs font-black shrink-0 shadow-2xs">
+                                {nombre.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="min-w-0">
+                                <h4 className="text-sm font-extrabold text-[#2D1C14] truncate" title={nombre}>
+                                  {nombre}
+                                </h4>
+                                <span className="text-[10px] font-bold text-[#8D6B57] block">
+                                  {data.cuotasCount} {data.cuotasCount === 1 ? 'aporte' : 'aportes'} en {data.gastosIds.size} {data.gastosIds.size === 1 ? 'gasto' : 'gastos'}
+                                </span>
+                              </div>
+                            </div>
+                            <span className="text-xs font-black text-[#2D1C14] bg-white px-2 py-1 rounded-lg border border-[#EADBCE]/60 shrink-0">
+                              {pct.toFixed(0)}%
                             </span>
                           </div>
-                        </div>
-                        <span className="text-xs font-black text-[#2D1C14] bg-white px-2 py-1 rounded-lg border border-[#EADBCE]/60 shrink-0">
-                          {pct.toFixed(0)}%
-                        </span>
-                      </div>
 
-                      <div>
-                        <div className="flex justify-between items-baseline">
-                          <span className="text-[10px] font-bold text-[#8D6B57] uppercase tracking-wider">Total Aportado</span>
-                          <span className="text-lg font-black text-[#2D1C14] tracking-tight">
-                            ${data.total.toLocaleString('es-CO')}
-                          </span>
+                          <div>
+                            <div className="flex justify-between items-baseline">
+                              <span className="text-[10px] font-bold text-[#8D6B57] uppercase tracking-wider">Total Aportado</span>
+                              <span className="text-lg font-black text-[#2D1C14] tracking-tight">
+                                ${data.total.toLocaleString('es-CO')}
+                              </span>
+                            </div>
+                            <div className="w-full bg-[#EADBCE]/50 rounded-full h-1.5 mt-1.5 overflow-hidden">
+                              <div 
+                                className="h-1.5 rounded-full bg-[#2D1C14] transition-all duration-500" 
+                                style={{ width: `${pct}%` }}
+                              ></div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="w-full bg-[#EADBCE]/50 rounded-full h-1.5 mt-1.5 overflow-hidden">
-                          <div 
-                            className="h-1.5 rounded-full bg-[#2D1C14] transition-all duration-500" 
-                            style={{ width: `${pct}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -698,12 +711,14 @@ export default function FinancesTab({
           {/* Grid de Gastos Activos */}
           {gastosFiltrados.length === 0 ? (
             <div className="bg-white p-12 rounded-3xl border border-[#EADBCE]/80 text-center text-[#8D6B57]">
-              <p className="text-3xl mb-2">💳</p>
+              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] border border-[#EADBCE] text-[#8D6B57] flex items-center justify-center mx-auto mb-3">
+                <IconCreditCard className="w-6 h-6" />
+              </div>
               <p className="font-bold text-[#2D1C14] text-sm">No se encontraron compromisos financieros activos.</p>
               <p className="text-xs text-[#8D6B57] mt-1">Prueba cambiando los filtros o agregando uno nuevo.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6 items-start">
               {gastosFiltrados.map((gasto) => (
                 <TarjetaFinanzas 
                   key={gasto.id} 
@@ -779,14 +794,16 @@ export default function FinancesTab({
           {/* Listado de Pagos Cubiertos */}
           {pagosCubiertosFiltrados.length === 0 ? (
             <div className="bg-white p-12 rounded-3xl border border-[#EADBCE]/80 text-center text-[#8D6B57] space-y-2">
-              <p className="text-3xl">📁</p>
+              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] border border-[#EADBCE] text-[#8D6B57] flex items-center justify-center mx-auto mb-3">
+                <IconFolder className="w-6 h-6" />
+              </div>
               <h4 className="font-bold text-[#2D1C14] text-sm">No hay pagos cubiertos archivados en esta vista.</h4>
               <p className="text-xs text-[#8D6B57] max-w-md mx-auto">
                 Cuando completes el 100% de aportes en un compromiso de la pestaña &quot;Compromisos del Mes&quot; y hagas clic en &quot;Guardar y Renovar&quot;, se guardará aquí organizadamente.
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-start">
               {pagosCubiertosFiltrados.map((pago) => (
                 <div 
                   key={pago.id}
@@ -798,8 +815,9 @@ export default function FinancesTab({
                       {pago.categoria || 'General'}
                     </span>
 
-                    <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                      Cubierto 100% ✓
+                    <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200 inline-flex items-center gap-1">
+                      <span>Cubierto 100%</span>
+                      <IconCheck className="w-3 h-3" />
                     </span>
                   </div>
 
@@ -869,16 +887,18 @@ export default function FinancesTab({
                       className="text-xs font-bold text-[#8D6B57] hover:text-[#2D1C14] hover:bg-[#FAF5F0] px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 active:scale-95 border border-[#EADBCE]/60"
                       title="Reabrir en Compromisos Activos"
                     >
-                      <span>↩️</span> Reabrir en Activos
+                      <IconRotateCcw className="w-3.5 h-3.5" />
+                      <span>Reabrir en Activos</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => eliminarPagoCubierto(pago.id)}
-                      className="text-xs font-bold text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
+                      aria-label="Eliminar del historial"
+                      className="text-xs font-bold text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 p-2 rounded-xl transition-all active:scale-95"
                       title="Eliminar del historial"
                     >
-                      🗑️
+                      <IconTrash className="w-4 h-4" />
                     </button>
                   </div>
 

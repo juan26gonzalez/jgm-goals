@@ -1,7 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { getFechaActualColombia } from '@/lib/dateUtils';
-import { IconDumbbell, IconCloud, IconBolt, IconCheck, IconRefresh } from '@/components/ui/Icons';
+import { 
+  IconDumbbell, 
+  IconCloud, 
+  IconBolt, 
+  IconCheck, 
+  IconRefresh, 
+  IconRotateCcw, 
+  IconUtensils, 
+  IconX, 
+  IconCopy, 
+  IconRocket, 
+  IconCheckCircle,
+  TrainingIcon 
+} from '@/components/ui/Icons';
 import type { WeeklyTrainingHabit, UserSession } from '@/types';
 
 interface TrainingTrackerProps {
@@ -9,45 +22,38 @@ interface TrainingTrackerProps {
 }
 
 // Configuración detallada de cada entrenamiento
-const configEntrenamientos: Record<string, { icono: string; categoria: string; descripcion: string; badge: string }> = {
+const configEntrenamientos: Record<string, { categoria: string; descripcion: string; badge: string }> = {
   'Lunes': {
-    icono: '🏋️‍♂️',
     categoria: 'Fuerza Pierna',
     badge: 'Leg Day',
     descripcion: 'Sentadillas pesadas, peso muerto rumano, zancadas y tren inferior'
   },
   'Martes': {
-    icono: '🚴‍♂️',
     categoria: 'Potencia / Peloton',
     badge: 'Cardio Hiit',
     descripcion: 'Sesión de potencia, intervalos de alta cadencia y resistencia aeróbica'
   },
   'Miércoles': {
-    icono: '🏃‍♂️',
     categoria: 'Velocidad en Pista',
     badge: 'Track Intervals',
     descripcion: 'Series de ritmo controlado, técnica de pisada y umbral de lactato'
   },
   'Jueves': {
-    icono: '💪',
     categoria: 'Fuerza Espalda',
     badge: 'Pull & Core',
     descripcion: 'Dominadas, jalones al pecho, remo con barra y fortalecimiento de core'
   },
   'Viernes': {
-    icono: '⚡',
     categoria: 'Fartlek Asfalto',
     badge: 'Speed Play',
     descripcion: 'Cambios de ritmo continuos en calle simulando ritmos de carrera'
   },
   'Sábado': {
-    icono: '🏔️',
     categoria: 'Fondo / Resistencia',
     badge: 'Long Run 12K',
     descripcion: 'Tirada larga de 12 km a ritmo aeróbico constante y fondo cardiovascular'
   },
   'Domingo': {
-    icono: '🧘‍♂️',
     categoria: 'Recuperación Activa',
     badge: 'Active Rest',
     descripcion: 'Caminata regenerativa, estiramientos de cadenas miofasciales y movilidad'
@@ -275,7 +281,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
       if (!existentes || existentes.length === 0) {
         await supabase.from('mercado_lista').insert([{
           producto_nombre: nombreItem,
-          categoria: '🥫 Despensa y Granos',
+          categoria: 'Despensa y Granos',
           cantidad: 1,
           precio_unitario: 14000,
           descuento_porcentaje: 0,
@@ -286,7 +292,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
 
       setNotificacionEspecial({
         visible: true,
-        mensaje: "🍳 ¡Tirada Larga 12km completada! Añadimos automáticamente 'Huevos y Arepa' a tu lista de Grocery para tu recuperación."
+        mensaje: "¡Tirada Larga 12km completada! Añadimos automáticamente 'Huevos y Arepa' a tu lista de Grocery para tu recuperación."
       });
       setTimeout(() => setNotificacionEspecial(null), 6000);
     } catch (err) {
@@ -380,7 +386,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
   const configHoy = habitoHoy ? configEntrenamientos[habitoHoy.day_of_week] : null;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
+    <div className="w-full max-w-[1680px] mx-auto space-y-6 animate-fade-in">
       
       {/* Banner de Estado de Sincronización */}
       {!sincronizadoNube ? (
@@ -412,8 +418,9 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
             <span className="font-bold text-emerald-900 text-xs">Nube Supabase Conectada</span>
             <span className="text-emerald-700/80 text-[11px]">· Sincronización en tiempo real activa</span>
           </div>
-          <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-lg border border-emerald-200">
-            Auto-Guardado ✓
+          <span className="text-[10px] font-bold text-emerald-700 bg-white px-2.5 py-0.5 rounded-lg border border-emerald-200 inline-flex items-center gap-1">
+            <span>Auto-Guardado</span>
+            <IconCheck className="w-3 h-3" />
           </span>
         </div>
       )}
@@ -422,16 +429,17 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
       {notificacionEspecial?.visible && (
         <div className="bg-[#2D1C14] text-white p-4 rounded-3xl border border-[#4A3225] shadow-[0_8px_24px_rgba(45,28,20,0.2)] flex items-center justify-between gap-3 animate-fade-in">
           <div className="flex items-center gap-3">
-            <IconBolt className="w-5 h-5 text-amber-500 shrink-0" />
+            <IconBolt className="w-5 h-5 text-amber-400 shrink-0" />
             <p className="text-xs sm:text-sm font-bold tracking-tight text-[#FAF7F4]">
               {notificacionEspecial.mensaje}
             </p>
           </div>
           <button
             onClick={() => setNotificacionEspecial(null)}
-            className="text-white/60 hover:text-white text-xs font-bold px-2 py-1"
+            aria-label="Cerrar notificación"
+            className="text-white/70 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors"
           >
-            ✕
+            <IconX className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -474,7 +482,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
             className="px-3.5 py-2 rounded-2xl border border-[#EADBCE] bg-[#FAF5F0] hover:bg-white text-[#2D1C14] text-xs font-bold transition-all active:scale-95 shadow-2xs flex items-center gap-1.5"
             title="Reiniciar todos los hábitos de la semana a pendientes"
           >
-            <span>🔄</span>
+            <IconRefresh className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Reiniciar</span>
           </button>
         </div>
@@ -483,11 +491,11 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
       {/* ========================================================================= */}
       {/* BENTO GRID DE ENTRENAMIENTOS */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-5">
         
         {/* TARJETA HÉROE: ACTIVIDAD DEL DÍA ACTUAL (Bento Principal) */}
         {habitoHoy && (
-          <div className="col-span-1 md:col-span-2 lg:col-span-2 md:row-span-2 bg-[#2D1C14] text-white p-6 md:p-8 rounded-3xl shadow-[0_12px_36px_rgba(45,28,20,0.15)] border border-[#3E271D] flex flex-col justify-between relative overflow-hidden group">
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-2 xl:row-span-2 bg-[#2D1C14] text-white p-6 md:p-8 rounded-3xl shadow-[0_12px_36px_rgba(45,28,20,0.15)] border border-[#3E271D] flex flex-col justify-between relative overflow-hidden group">
             
             <div className="absolute top-0 right-0 w-64 h-64 bg-radial from-[#55382B]/30 to-transparent rounded-full blur-3xl pointer-events-none" />
 
@@ -505,9 +513,9 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                   )}
                 </div>
 
-                <span className="text-3xl md:text-4xl filter drop-shadow-md">
-                  {configHoy?.icono || '🏃‍♂️'}
-                </span>
+                <div className="w-11 h-11 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-[#FAF7F4] shadow-inner">
+                  <TrainingIcon day={habitoHoy.day_of_week} className="w-6 h-6" />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -534,8 +542,8 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                     onChange={() => handleCheckboxChange(habitoHoy)}
                     className="peer appearance-none w-8 h-8 rounded-xl border-2 border-[#E5C8B4]/40 bg-white/10 checked:bg-white checked:border-white transition-all cursor-pointer shadow-inner"
                   />
-                  <span className="absolute text-[#2D1C14] font-black text-lg pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">
-                    ✓
+                  <span className="absolute text-[#2D1C14] pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity flex items-center justify-center">
+                    <IconCheck className="w-4 h-4" strokeWidth={2.8} />
                   </span>
                 </label>
                 <div>
@@ -558,7 +566,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                 }`}
               >
                 <span>{habitoHoy.is_completed ? 'Desmarcar' : 'Completar Hoy'}</span>
-                <span>{habitoHoy.is_completed ? '↩' : '⚡'}</span>
+                {habitoHoy.is_completed ? <IconRotateCcw className="w-3.5 h-3.5" /> : <IconBolt className="w-3.5 h-3.5" />}
               </button>
             </div>
           </div>
@@ -580,16 +588,19 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
             >
               <div>
                 <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-lg">{config?.icono || '🏋️‍♂️'}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-xl bg-[#FAF5F0] border border-[#EADBCE]/80 text-[#2D1C14] flex items-center justify-center shrink-0">
+                      <TrainingIcon day={h.day_of_week} className="w-4 h-4" />
+                    </span>
                     <span className="text-xs font-extrabold text-[#2D1C14] tracking-tight">
                       {h.day_of_week}
                     </span>
                   </div>
 
                   {h.is_completed ? (
-                    <span className="text-[9px] font-black uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                      Listo ✓
+                    <span className="text-[9px] font-black uppercase text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 inline-flex items-center gap-1">
+                      <span>Listo</span>
+                      <IconCheck className="w-2.5 h-2.5" />
                     </span>
                   ) : (
                     <span className="text-[9px] font-bold text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
@@ -615,8 +626,9 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                 )}
 
                 {esSabadoTirada && !h.is_completed && (
-                  <p className="text-[10px] text-[#C89F89] font-semibold mt-2 flex items-center gap-1 bg-[#FAF5F0] px-2 py-1 rounded-lg border border-[#EADBCE]/60">
-                    <span>🍳</span> Añade &quot;Huevos y Arepa&quot; al completar
+                  <p className="text-[10px] text-[#8D6B57] font-semibold mt-2 flex items-center gap-1.5 bg-[#FAF5F0] px-2.5 py-1.5 rounded-lg border border-[#EADBCE]/60">
+                    <IconUtensils className="w-3 h-3 shrink-0 text-[#6F4A39]" />
+                    <span>Añade &quot;Huevos y Arepa&quot; al completar</span>
                   </p>
                 )}
               </div>
@@ -633,8 +645,8 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                     onChange={() => handleCheckboxChange(h)}
                     className="peer appearance-none w-6 h-6 rounded-lg border-2 border-[#EADBCE] bg-[#FAF5F0]/60 checked:bg-[#2D1C14] checked:border-[#2D1C14] transition-all cursor-pointer shadow-2xs"
                   />
-                  <span className="absolute text-white font-black text-xs pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">
-                    ✓
+                  <span className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity flex items-center justify-center">
+                    <IconCheck className="w-3.5 h-3.5" strokeWidth={2.8} />
                   </span>
                 </label>
               </div>
@@ -649,8 +661,10 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 border border-[#EADBCE] shadow-2xl animate-fade-in">
             <div className="flex justify-between items-center pb-2 border-b border-[#EADBCE]/60">
-              <div className="flex items-center gap-2">
-                <span className="text-xl">☁️</span>
+              <div className="flex items-center gap-2.5">
+                <span className="w-9 h-9 rounded-xl bg-[#FAF5F0] border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center">
+                  <IconCloud className="w-5 h-5" />
+                </span>
                 <div>
                   <h3 className="text-sm font-black text-[#2D1C14]">
                     Activar Nube Supabase
@@ -661,9 +675,10 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
               <button
                 type="button"
                 onClick={() => setMostrarModalSql(false)}
-                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold p-1"
+                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold p-1.5 rounded-lg hover:bg-[#FAF5F0] inline-flex items-center gap-1"
               >
-                ✕ Cerrar
+                <IconX className="w-3.5 h-3.5" />
+                <span>Cerrar</span>
               </button>
             </div>
 
@@ -688,7 +703,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                 onClick={copiarSql}
                 className="flex-1 py-2.5 bg-[#2D1C14] hover:bg-[#3E271D] text-white rounded-xl text-xs font-bold active:scale-95 transition-all shadow-xs flex items-center justify-center gap-1.5"
               >
-                <span>{sqlCopiado ? '✅' : '📋'}</span>
+                {sqlCopiado ? <IconCheckCircle className="w-4 h-4" /> : <IconCopy className="w-4 h-4" />}
                 <span>{sqlCopiado ? '¡Copiado al Portapapeles!' : 'Copiar Script SQL'}</span>
               </button>
 
@@ -698,7 +713,7 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                 rel="noopener noreferrer"
                 className="flex-1 py-2.5 bg-[#FAF5F0] hover:bg-[#F3ECE4] text-[#2D1C14] border border-[#EADBCE] rounded-xl text-xs font-bold active:scale-95 transition-all shadow-2xs flex items-center justify-center gap-1.5 text-center"
               >
-                <span>🚀</span>
+                <IconRocket className="w-4 h-4" />
                 <span>Abrir SQL Editor (1 Clic)</span>
               </a>
             </div>
@@ -715,7 +730,8 @@ export default function TrainingTracker({ sesion: sesionProp }: TrainingTrackerP
                 }}
                 className="text-[11px] font-bold text-[#2D1C14] hover:underline flex items-center gap-1"
               >
-                <span>🔄</span> Verificar Conexión
+                <IconRefresh className="w-3.5 h-3.5" />
+                <span>Verificar Conexión</span>
               </button>
             </div>
           </div>

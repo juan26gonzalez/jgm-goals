@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
+import { IconX } from '@/components/ui/Icons';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   maxWidth?: string;
 }
@@ -34,12 +35,13 @@ export default function Modal({ isOpen, onClose, title, children, maxWidth = 'ma
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-5 px-6 border-b border-[#EADBCE]/60">
-          <h3 className="text-lg font-bold text-[#2D1C14] tracking-tight">{title}</h3>
+          <h3 className="text-lg font-bold text-[#2D1C14] tracking-tight flex items-center gap-2">{title}</h3>
           <button 
             onClick={onClose} 
+            aria-label="Cerrar"
             className="w-8 h-8 rounded-full bg-[#FAF5F0] text-[#8D6B57] hover:text-[#2D1C14] hover:bg-[#EADBCE]/60 flex items-center justify-center transition-all font-bold text-sm active:scale-90"
           >
-            ✕
+            <IconX className="w-4 h-4" />
           </button>
         </div>
         <div className="p-6 overflow-y-auto">

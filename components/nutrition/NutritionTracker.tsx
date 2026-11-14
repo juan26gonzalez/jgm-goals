@@ -9,7 +9,15 @@ import {
   IconDroplet, 
   IconEdit, 
   IconCheck, 
-  IconX 
+  IconX,
+  IconProtein,
+  IconCarbs,
+  IconFats,
+  IconScale,
+  IconCopy,
+  IconRocket,
+  IconCheckCircle,
+  IconArrowRight
 } from '@/components/ui/Icons';
 import type { UserSession, MetaNutricionalDia, RegistroNutricionDiaria } from '@/types';
 
@@ -378,7 +386,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
 
     setGuardando(false);
     setModalRegistro(false);
-    setNotificacion(`✅ Macros del ${formatearFechaBonita(fechaSeleccionada)} guardados correctamente.`);
+    setNotificacion(`Macros del ${formatearFechaBonita(fechaSeleccionada)} guardados correctamente.`);
     setTimeout(() => setNotificacion(null), 4000);
   };
 
@@ -499,7 +507,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
       setProcesandoCsv(false);
       setModalImportarCsv(false);
       setTextoCsv('');
-      setNotificacion(`📥 Se importaron exitosamente ${importadosCount} días desde MyFitnessPal.`);
+      setNotificacion(`Se importaron exitosamente ${importadosCount} días desde MyFitnessPal.`);
       setTimeout(() => setNotificacion(null), 5000);
     } catch (err) {
       alert("Error procesando CSV: " + (err instanceof Error ? err.message : String(err)));
@@ -528,13 +536,15 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
+    <div className="w-full max-w-[1680px] mx-auto space-y-6 animate-fade-in">
 
       {/* Banner de Estado / Notificación */}
       {notificacion && (
         <div className="bg-[#2D1C14] text-white p-4 rounded-3xl border border-[#4A3225] shadow-[0_8px_24px_rgba(45,28,20,0.2)] flex items-center justify-between gap-3 animate-fade-in sticky top-4 z-40">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="text-xl shrink-0">🥗</span>
+            <span className="w-8 h-8 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
+              <IconCheckCircle className="w-4 h-4 text-emerald-400" />
+            </span>
             <p className="text-xs sm:text-sm font-bold tracking-tight text-[#FAF7F4] truncate">
               {notificacion}
             </p>
@@ -542,9 +552,10 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
           <button
             type="button"
             onClick={() => setNotificacion(null)}
-            className="text-xs font-bold text-[#E5C8B4] hover:text-white px-2 py-1 shrink-0"
+            aria-label="Cerrar notificación"
+            className="text-[#E5C8B4] hover:text-white p-1.5 rounded-lg hover:bg-white/10 shrink-0 transition-colors"
           >
-            ✕
+            <IconX className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -644,8 +655,8 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
 
-        {/* Tarjeta Héroe Calórica (7 columnas en desktop) */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-6 md:p-8 border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-6">
+        {/* Tarjeta Héroe Calórica */}
+        <div className="lg:col-span-6 xl:col-span-5 bg-white rounded-3xl p-6 md:p-8 border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-6">
           <div>
             <div className="flex justify-between items-start gap-2 mb-2">
               <div>
@@ -698,9 +709,16 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
               ></div>
             </div>
 
-            <div className="flex justify-between text-[11px] font-bold text-[#8D6B57]">
+            <div className="flex justify-between items-center text-[11px] font-bold text-[#8D6B57]">
               <span>Progreso: {pctCalorias}%</span>
-              <span>{pctCalorias >= 100 ? 'Meta alcanzada ✓' : `${metaDiaActual.calorias - registroHoy.calorias} kcal para el objetivo`}</span>
+              {pctCalorias >= 100 ? (
+                <span className="inline-flex items-center gap-1 text-emerald-800">
+                  <span>Meta alcanzada</span>
+                  <IconCheck className="w-3.5 h-3.5" />
+                </span>
+              ) : (
+                <span>{metaDiaActual.calorias - registroHoy.calorias} kcal para el objetivo</span>
+              )}
             </div>
           </div>
 
@@ -726,13 +744,15 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
           </div>
         </div>
 
-        {/* 4 Bento Cards para Macronutrientes (5 columnas en desktop) */}
-        <div className="lg:col-span-5 grid grid-cols-2 gap-3.5">
+        {/* 4 Bento Cards para Macronutrientes */}
+        <div className="lg:col-span-6 xl:col-span-7 grid grid-cols-2 xl:grid-cols-4 gap-4">
 
-          {/* 🥩 Proteína */}
-          <div className="bg-white p-4 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-2">
+          {/* Proteína */}
+          <div className="bg-white p-5 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-lg">🥩</span>
+              <span className="w-9 h-9 rounded-xl bg-[#FAF5F0] border border-[#EADBCE]/80 text-[#2D1C14] flex items-center justify-center">
+                <IconProtein className="w-4 h-4" />
+              </span>
               <span className="text-[9px] font-black uppercase text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
                 P {metaDiaActual.pctProteina}%
               </span>
@@ -758,10 +778,12 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             </span>
           </div>
 
-          {/* 🍞 Carbohidratos */}
-          <div className="bg-white p-4 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-2">
+          {/* Carbohidratos */}
+          <div className="bg-white p-5 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-lg">🍞</span>
+              <span className="w-9 h-9 rounded-xl bg-[#FAF5F0] border border-[#EADBCE]/80 text-[#2D1C14] flex items-center justify-center">
+                <IconCarbs className="w-4 h-4" />
+              </span>
               <span className="text-[9px] font-black uppercase text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
                 C {metaDiaActual.pctCarbs}%
               </span>
@@ -787,10 +809,12 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             </span>
           </div>
 
-          {/* 🥑 Grasas */}
-          <div className="bg-white p-4 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-2">
+          {/* Grasas */}
+          <div className="bg-white p-5 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-lg">🥑</span>
+              <span className="w-9 h-9 rounded-xl bg-[#FAF5F0] border border-[#EADBCE]/80 text-[#2D1C14] flex items-center justify-center">
+                <IconFats className="w-4 h-4" />
+              </span>
               <span className="text-[9px] font-black uppercase text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
                 F {metaDiaActual.pctGrasa}%
               </span>
@@ -816,10 +840,12 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             </span>
           </div>
 
-          {/* 💧 Hidratación */}
-          <div className="bg-white p-4 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-2">
+          {/* Hidratación */}
+          <div className="bg-white p-5 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex flex-col justify-between space-y-3">
             <div className="flex justify-between items-center">
-              <IconDroplet className="w-5 h-5 text-sky-600" />
+              <span className="w-9 h-9 rounded-xl bg-sky-50 border border-sky-200/80 text-sky-700 flex items-center justify-center">
+                <IconDroplet className="w-4 h-4" />
+              </span>
               <span className="text-[9px] font-black uppercase text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
                 Meta 3.0 L
               </span>
@@ -873,7 +899,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-3.5">
           {diasSemanaArray.map(({ nombreDia, meta }) => {
             const esHoy = nombreDia === diaActualNombre;
             return (
@@ -885,32 +911,41 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                     : 'bg-white/80 border-[#EADBCE]/80 hover:bg-white'
                 }`}
               >
-                <div className="flex justify-between items-start">
-                  <div>
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
                     <span className={`text-xs font-black block ${esHoy ? 'text-[#2D1C14]' : 'text-[#6F4A39]'}`}>
                       {nombreDia}
                     </span>
-                    <span className="text-[9px] font-bold text-[#8D6B57] block truncate max-w-[100px]">
+                    <span className="text-[9px] font-bold text-[#8D6B57] block truncate">
                       {meta.tipoDia}
                     </span>
                   </div>
 
-                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-[#FAF5F0] text-[#2D1C14] border border-[#EADBCE]/60">
+                  <span className="text-[9px] font-black px-1.5 py-0.5 rounded bg-[#FAF5F0] text-[#2D1C14] border border-[#EADBCE]/60 shrink-0">
                     {meta.calorias}k
                   </span>
                 </div>
 
-                <div className="space-y-1 text-[10px] font-semibold text-[#6F4A39]">
-                  <div className="flex justify-between">
-                    <span>🥩 Proteína:</span>
+                <div className="space-y-1.5 text-[11px] font-semibold text-[#6F4A39]">
+                  <div className="flex justify-between items-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <IconProtein className="w-3.5 h-3.5 text-[#8D6B57]" />
+                      <span>Proteína:</span>
+                    </span>
                     <span className="font-bold text-[#2D1C14]">{meta.gramosProteina}g</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>🍞 Carbs:</span>
+                  <div className="flex justify-between items-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <IconCarbs className="w-3.5 h-3.5 text-[#8D6B57]" />
+                      <span>Carbs:</span>
+                    </span>
                     <span className="font-bold text-[#2D1C14]">{meta.gramosCarbs}g</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span>🥑 Grasas:</span>
+                  <div className="flex justify-between items-center">
+                    <span className="inline-flex items-center gap-1.5">
+                      <IconFats className="w-3.5 h-3.5 text-[#8D6B57]" />
+                      <span>Grasas:</span>
+                    </span>
                     <span className="font-bold text-[#2D1C14]">{meta.gramosGrasa}g</span>
                   </div>
                 </div>
@@ -927,7 +962,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
       </div>
 
       {/* ========================================================================= */}
-      {/* 📝 MODAL: REGISTRO RÁPIDO DE MACROS */}
+      {/* MODAL: REGISTRO RÁPIDO DE MACROS */}
       {/* ========================================================================= */}
       {modalRegistro && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
@@ -935,7 +970,8 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             <div className="flex justify-between items-center pb-2 border-b border-[#EADBCE]/60">
               <div>
                 <h3 className="text-sm font-black text-[#2D1C14] flex items-center gap-2">
-                  <span>⚡</span> Registrar Macros del Día
+                  <IconBolt className="w-4 h-4 text-[#2D1C14]" />
+                  <span>Registrar Macros del Día</span>
                 </h3>
                 <p className="text-[10px] text-[#8D6B57]">
                   {formatearFechaBonita(fechaSeleccionada)} ({diaActualNombre})
@@ -944,9 +980,10 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
               <button
                 type="button"
                 onClick={() => setModalRegistro(false)}
-                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold"
+                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold inline-flex items-center gap-1 p-1.5 rounded-lg hover:bg-[#FAF5F0]"
               >
-                ✕ Cerrar
+                <IconX className="w-3.5 h-3.5" />
+                <span>Cerrar</span>
               </button>
             </div>
 
@@ -968,8 +1005,9 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
 
               <div className="grid grid-cols-3 gap-2.5">
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] block mb-1">
-                    🥩 Prot (g)
+                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] flex items-center gap-1 mb-1">
+                    <IconProtein className="w-3 h-3" />
+                    <span>Prot (g)</span>
                   </label>
                   <input
                     type="number"
@@ -982,8 +1020,9 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] block mb-1">
-                    🍞 Carbs (g)
+                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] flex items-center gap-1 mb-1">
+                    <IconCarbs className="w-3 h-3" />
+                    <span>Carbs (g)</span>
                   </label>
                   <input
                     type="number"
@@ -996,8 +1035,9 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] block mb-1">
-                    🥑 Grasa (g)
+                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] flex items-center gap-1 mb-1">
+                    <IconFats className="w-3 h-3" />
+                    <span>Grasa (g)</span>
                   </label>
                   <input
                     type="number"
@@ -1012,8 +1052,9 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] block mb-1">
-                    💧 Agua (Litros)
+                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] flex items-center gap-1 mb-1">
+                    <IconDroplet className="w-3 h-3 text-sky-600" />
+                    <span>Agua (Litros)</span>
                   </label>
                   <input
                     type="number"
@@ -1026,8 +1067,9 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] block mb-1">
-                    ⚖️ Peso (kg, opcional)
+                  <label className="text-[10px] font-bold uppercase text-[#8D6B57] flex items-center gap-1 mb-1">
+                    <IconScale className="w-3 h-3" />
+                    <span>Peso (kg, opcional)</span>
                   </label>
                   <input
                     type="number"
@@ -1062,7 +1104,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
       )}
 
       {/* ========================================================================= */}
-      {/* 📥 MODAL: IMPORTADOR DE CSV DE MYFITNESSPAL PREMIUM */}
+      {/* MODAL: IMPORTADOR DE CSV DE MYFITNESSPAL PREMIUM */}
       {/* ========================================================================= */}
       {modalImportarCsv && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
@@ -1070,7 +1112,8 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
             <div className="flex justify-between items-center pb-2 border-b border-[#EADBCE]/60">
               <div>
                 <h3 className="text-sm font-black text-[#2D1C14] flex items-center gap-2">
-                  <span>📥</span> Importar Datos de MyFitnessPal Premium
+                  <IconDownload className="w-4 h-4" />
+                  <span>Importar Datos de MyFitnessPal Premium</span>
                 </h3>
                 <p className="text-[10px] text-[#8D6B57]">
                   Carga tus días históricos exportados desde la app
@@ -1079,9 +1122,10 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
               <button
                 type="button"
                 onClick={() => setModalImportarCsv(false)}
-                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold"
+                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold inline-flex items-center gap-1 p-1.5 rounded-lg hover:bg-[#FAF5F0]"
               >
-                ✕ Cerrar
+                <IconX className="w-3.5 h-3.5" />
+                <span>Cerrar</span>
               </button>
             </div>
 
@@ -1090,7 +1134,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                 ¿Cómo exportar desde MyFitnessPal Premium?
               </p>
               <ol className="list-decimal list-inside space-y-1 text-[11px] text-[#6F4A39]">
-                <li>En la app de MFP, ve a <strong>Más / Perfil</strong> ➔ <strong>Nutrición</strong>.</li>
+                <li>En la app de MFP, ve a <strong>Más / Perfil</strong> <IconArrowRight className="w-3 h-3 inline mx-0.5 text-[#8D6B57]" /> <strong>Nutrición</strong>.</li>
                 <li>Toca el icono de <strong>Exportar</strong> (arriba a la derecha).</li>
                 <li>Abre el CSV descargado, copia su contenido y pégalo abajo (o arrastra el archivo).</li>
               </ol>
@@ -1121,9 +1165,10 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                 type="button"
                 onClick={procesarCsvMyFitnessPal}
                 disabled={procesandoCsv || !textoCsv.trim()}
-                className="w-2/3 py-2.5 bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold rounded-xl active:scale-95 transition-all shadow-xs disabled:opacity-50"
+                className="w-2/3 py-2.5 bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold rounded-xl active:scale-95 transition-all shadow-xs disabled:opacity-50 inline-flex items-center justify-center gap-1.5"
               >
-                {procesandoCsv ? 'Procesando...' : '📥 Procesar e Importar'}
+                <IconDownload className="w-3.5 h-3.5" />
+                <span>{procesandoCsv ? 'Procesando...' : 'Procesar e Importar'}</span>
               </button>
             </div>
           </div>
@@ -1131,21 +1176,23 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
       )}
 
       {/* ========================================================================= */}
-      {/* ☁️ MODAL: ACTIVAR NUBE SUPABASE (SCRIPT SQL) */}
+      {/* MODAL: ACTIVAR NUBE SUPABASE (SCRIPT SQL) */}
       {/* ========================================================================= */}
       {modalSql && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 border border-[#EADBCE] shadow-2xl animate-fade-in">
             <div className="flex justify-between items-center pb-2 border-b border-[#EADBCE]/60">
               <h3 className="text-sm font-black text-[#2D1C14] flex items-center gap-2">
-                <span>☁️</span> Activar Nube de Nutrición en Supabase
+                <IconCloud className="w-4 h-4" />
+                <span>Activar Nube de Nutrición en Supabase</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setModalSql(false)}
-                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold"
+                className="text-[#8D6B57] hover:text-[#2D1C14] text-xs font-bold inline-flex items-center gap-1 p-1.5 rounded-lg hover:bg-[#FAF5F0]"
               >
-                ✕ Cerrar
+                <IconX className="w-3.5 h-3.5" />
+                <span>Cerrar</span>
               </button>
             </div>
 
@@ -1161,9 +1208,10 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
               <button
                 type="button"
                 onClick={copiarSql}
-                className="flex-1 py-2.5 bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold rounded-xl active:scale-95 transition-all shadow-xs"
+                className="flex-1 py-2.5 bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold rounded-xl active:scale-95 transition-all shadow-xs inline-flex items-center justify-center gap-1.5"
               >
-                {sqlCopiado ? '✅ ¡Copiado!' : '📋 Copiar Script SQL'}
+                {sqlCopiado ? <IconCheckCircle className="w-3.5 h-3.5" /> : <IconCopy className="w-3.5 h-3.5" />}
+                <span>{sqlCopiado ? '¡Copiado!' : 'Copiar Script SQL'}</span>
               </button>
 
               <a
@@ -1172,7 +1220,7 @@ export default function NutritionTracker({ sesion: sesionProp, strHoy: strHoyPro
                 rel="noopener noreferrer"
                 className="flex-1 py-2.5 bg-[#FAF5F0] hover:bg-[#F3ECE4] text-[#2D1C14] border border-[#EADBCE] rounded-xl text-xs font-bold active:scale-95 transition-all shadow-2xs flex items-center justify-center gap-1.5 text-center"
               >
-                <span>🚀</span>
+                <IconRocket className="w-3.5 h-3.5" />
                 <span>Abrir SQL Editor</span>
               </a>
             </div>

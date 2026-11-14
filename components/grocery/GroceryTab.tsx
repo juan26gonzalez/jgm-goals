@@ -9,7 +9,18 @@ import {
   IconPlus, 
   IconCheck, 
   IconTrash, 
-  IconEdit 
+  IconEdit,
+  IconX,
+  IconBook,
+  IconSave,
+  IconWallet,
+  IconChartBar,
+  IconCopy,
+  IconCalendar,
+  IconRefresh,
+  IconChevronRight,
+  limpiarCategoriaGrocery,
+  CategoryIcon
 } from '@/components/ui/Icons';
 import type { MercadoProducto, MercadoItem, UserSession, Gasto, CompraHistorial, CompraHistorialItem } from '@/types';
 
@@ -29,22 +40,22 @@ interface GroceryTabProps {
 }
 
 export const categoriasSugeridas = [
-  { id: '🥫 Despensa y Granos', label: '🥫 Despensa y Granos', tag: 'Despensa' },
-  { id: '🥩 Carnes, Pollo y Pescado', label: '🥩 Carnes, Pollo y Pescado', tag: 'Carnes' },
-  { id: '🍎 Frutas y Verduras', label: '🍎 Frutas y Verduras', tag: 'Frutas/Verduras' },
-  { id: '🥛 Lácteos y Huevos', label: '🥛 Lácteos y Huevos', tag: 'Lácteos' },
-  { id: '🍞 Panadería y Arepas', label: '🍞 Panadería y Arepas', tag: 'Panadería' },
-  { id: '🧼 Aseo y Limpieza', label: '🧼 Aseo y Limpieza', tag: 'Aseo' },
-  { id: '🧴 Cuidado Personal', label: '🧴 Cuidado Personal', tag: 'Cuidado Personal' },
-  { id: '🥤 Bebidas y Cafés', label: '🥤 Bebidas y Cafés', tag: 'Bebidas' },
-  { id: '🥓 Embutidos y Charcutería', label: '🥓 Embutidos y Charcutería', tag: 'Embutidos' },
-  { id: '🍪 Snacks y Pasabocas', label: '🍪 Snacks y Pasabocas', tag: 'Snacks' },
-  { id: '🧊 Congelados', label: '🧊 Congelados', tag: 'Congelados' },
-  { id: '🧂 Condimentos y Salsas', label: '🧂 Condimentos y Salsas', tag: 'Condimentos' },
-  { id: '🐾 Mascotas', label: '🐾 Mascotas', tag: 'Mascotas' },
-  { id: '💊 Salud y Botiquín', label: '💊 Salud y Botiquín', tag: 'Salud' },
-  { id: '📦 General / Otros', label: '📦 General / Otros', tag: 'General' },
-  { id: 'Otro', label: '✏️ Otra categoría (Personalizada)', tag: 'Personalizada' },
+  { id: 'Despensa y Granos', label: 'Despensa y Granos', tag: 'Despensa' },
+  { id: 'Carnes, Pollo y Pescado', label: 'Carnes, Pollo y Pescado', tag: 'Carnes' },
+  { id: 'Frutas y Verduras', label: 'Frutas y Verduras', tag: 'Frutas/Verduras' },
+  { id: 'Lácteos y Huevos', label: 'Lácteos y Huevos', tag: 'Lácteos' },
+  { id: 'Panadería y Arepas', label: 'Panadería y Arepas', tag: 'Panadería' },
+  { id: 'Aseo y Limpieza', label: 'Aseo y Limpieza', tag: 'Aseo' },
+  { id: 'Cuidado Personal', label: 'Cuidado Personal', tag: 'Cuidado Personal' },
+  { id: 'Bebidas y Cafés', label: 'Bebidas y Cafés', tag: 'Bebidas' },
+  { id: 'Embutidos y Charcutería', label: 'Embutidos y Charcutería', tag: 'Embutidos' },
+  { id: 'Snacks y Pasabocas', label: 'Snacks y Pasabocas', tag: 'Snacks' },
+  { id: 'Congelados', label: 'Congelados', tag: 'Congelados' },
+  { id: 'Condimentos y Salsas', label: 'Condimentos y Salsas', tag: 'Condimentos' },
+  { id: 'Mascotas', label: 'Mascotas', tag: 'Mascotas' },
+  { id: 'Salud y Botiquín', label: 'Salud y Botiquín', tag: 'Salud' },
+  { id: 'General / Otros', label: 'General / Otros', tag: 'General' },
+  { id: 'Otro', label: 'Otra categoría (Personalizada)', tag: 'Personalizada' },
 ];
 
 const nombresMeses = [
@@ -126,7 +137,7 @@ export default function GroceryTab({
   const [catNombre, setCatNombre] = useState('');
   const [catPrecio, setCatPrecio] = useState('');
   const [catUnidad, setCatUnidad] = useState('und');
-  const [catCat, setCatCat] = useState('🥫 Despensa y Granos');
+  const [catCat, setCatCat] = useState('Despensa y Granos');
   const [catPersonalizada, setCatPersonalizada] = useState('');
   const [guardandoProd, setGuardandoProd] = useState(false);
 
@@ -140,7 +151,7 @@ export default function GroceryTab({
   const [editProdNombre, setEditProdNombre] = useState('');
   const [editProdPrecio, setEditProdPrecio] = useState('');
   const [editProdUnidad, setEditProdUnidad] = useState('und');
-  const [editProdCat, setEditProdCat] = useState('🥫 Despensa y Granos');
+  const [editProdCat, setEditProdCat] = useState('Despensa y Granos');
   const [editProdCatPersonalizada, setEditProdCatPersonalizada] = useState('');
   const [guardandoEdicionProd, setGuardandoEdicionProd] = useState(false);
 
@@ -220,7 +231,7 @@ export default function GroceryTab({
   const saldoPresupuesto = presupuestoMercado - totalProyectado;
 
   const resumenCategoriasMercado = mercadoLista.reduce((acc: Record<string, number>, item: MercadoItem) => {
-    const cat = item?.categoria || 'General';
+    const cat = limpiarCategoriaGrocery(item?.categoria || 'General');
     const precioFinal = (Number(item?.cantidad) * Number(item?.precio_unitario)) * (1 - (Number(item?.descuento_porcentaje) || 0) / 100);
     acc[cat] = (acc[cat] || 0) + precioFinal;
     return acc;
@@ -265,13 +276,15 @@ export default function GroceryTab({
     setEditProdNombre(prod.nombre);
     setEditProdPrecio(String(prod.precio_referencia));
     setEditProdUnidad(prod.unidad || 'und');
-    const match = categoriasSugeridas.find(c => c.label === prod.categoria || c.id === prod.categoria);
+    const match = categoriasSugeridas.find(
+      c => c.id === prod.categoria || c.label === limpiarCategoriaGrocery(prod.categoria)
+    );
     if (match) {
       setEditProdCat(match.id);
       setEditProdCatPersonalizada('');
     } else {
       setEditProdCat('Otro');
-      setEditProdCatPersonalizada(prod.categoria || '');
+      setEditProdCatPersonalizada(limpiarCategoriaGrocery(prod.categoria));
     }
   }
 
@@ -482,12 +495,12 @@ export default function GroceryTab({
   const listaFiltrada = mercadoLista.filter(item => {
     if (filtroLista === 'pendientes' && item.comprado) return false;
     if (filtroLista === 'carrito' && !item.comprado) return false;
-    if (categoriaFiltro && (item.categoria || 'General') !== categoriaFiltro) return false;
+    if (categoriaFiltro && limpiarCategoriaGrocery(item.categoria || 'General') !== categoriaFiltro) return false;
     return true;
   });
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-6">
+    <div className="w-full max-w-[1680px] mx-auto animate-fade-in space-y-6">
       
       {/* Selector Principal: Compra Actual vs Historial de Compras */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-3 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)]">
@@ -583,7 +596,10 @@ export default function GroceryTab({
 
             {/* En Carrito */}
             <div className="bg-[#3E271D] p-6 rounded-3xl shadow-xs text-white flex flex-col justify-between">
-              <span className="text-[10px] font-bold text-[#E3C3AF] uppercase tracking-wider">En Carrito ✔</span>
+              <span className="text-[10px] font-bold text-[#E3C3AF] uppercase tracking-wider inline-flex items-center gap-1.5">
+                <span>En Carrito</span>
+                <IconCheck className="w-3.5 h-3.5" />
+              </span>
               <p className="text-3xl font-extrabold mt-2 tracking-tight">${totalCarrito.toLocaleString('es-CO')}</p>
               <span className="text-xs text-[#E3C3AF] mt-2 font-medium">{mercadoLista.filter(i => i.comprado).length} de {mercadoLista.length} listos</span>
             </div>
@@ -604,9 +620,10 @@ export default function GroceryTab({
                 {categoriaFiltro && (
                   <button 
                     onClick={() => setCategoriaFiltro(null)}
-                    className="text-xs font-bold text-[#2D1C14] hover:underline"
+                    className="text-xs font-bold text-[#2D1C14] hover:underline inline-flex items-center gap-1"
                   >
-                    ✕ Ver todas
+                    <IconX className="w-3 h-3" />
+                    <span>Ver todas</span>
                   </button>
                 )}
               </div>
@@ -621,6 +638,7 @@ export default function GroceryTab({
                         : 'bg-[#FAF5F0] text-[#4A3225] border-[#EADBCE]/60 hover:border-[#D9C4B3]'
                     }`}
                   >
+                    <CategoryIcon category={cat} className="w-3.5 h-3.5 shrink-0" />
                     <span className="font-semibold">{cat}</span>
                     <span className={`font-bold ${categoriaFiltro === cat ? 'text-[#C89F89]' : 'text-[#2D1C14]'}`}>${Number(total).toLocaleString('es-CO')}</span>
                   </button>
@@ -630,14 +648,19 @@ export default function GroceryTab({
           )}
 
           {/* Sección Principal: Catálogo y Lista Activa */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             {/* Columna Izquierda: Formulario y Catálogo Frecuente */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
+            <div className="lg:col-span-4 flex flex-col gap-6">
               
               {/* Formulario Agregar Producto al Catálogo con Lista de Opciones */}
               <div className="bg-white p-6 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80">
-                <h3 className="text-base font-bold text-[#2D1C14] mb-4">📚 Agregar al Catálogo</h3>
+                <h3 className="text-base font-bold text-[#2D1C14] mb-4 flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-lg bg-[#FAF5F0] border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center">
+                    <IconBook className="w-3.5 h-3.5" />
+                  </span>
+                  <span>Agregar al Catálogo</span>
+                </h3>
                 <form onSubmit={crearProductoCatalogo} className="space-y-3.5">
                   <div>
                     <label className="text-[10px] font-bold text-[#8D6B57] uppercase tracking-wider block mb-1">
@@ -784,8 +807,9 @@ export default function GroceryTab({
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <span className="text-[11px] font-bold text-[#6F4A39]">${Number(prod.precio_referencia).toLocaleString('es-CO')} / {prod.unidad}</span>
                           {prod.categoria && (
-                            <span className="text-[9px] font-medium text-[#8D6B57] bg-white px-1.5 py-0.2 rounded border border-[#EADBCE]">
-                              {prod.categoria}
+                            <span className="text-[9px] font-medium text-[#8D6B57] bg-white px-1.5 py-0.5 rounded border border-[#EADBCE] inline-flex items-center gap-1">
+                              <CategoryIcon category={prod.categoria} className="w-2.5 h-2.5 shrink-0" />
+                              <span>{limpiarCategoriaGrocery(prod.categoria)}</span>
                             </span>
                           )}
                         </div>
@@ -795,18 +819,18 @@ export default function GroceryTab({
                         <button 
                           type="button"
                           onClick={() => abrirEdicionProd(prod)}
-                          className="w-7 h-7 rounded-full text-[#8D6B57] hover:text-[#2D1C14] hover:bg-white flex items-center justify-center transition-colors text-xs active:scale-90 border border-transparent hover:border-[#EADBCE]"
+                          className="w-7 h-7 rounded-full text-[#8D6B57] hover:text-[#2D1C14] hover:bg-white flex items-center justify-center transition-colors active:scale-90 border border-transparent hover:border-[#EADBCE]"
                           title="Editar producto del catálogo"
                         >
-                          ✏️
+                          <IconEdit className="w-3.5 h-3.5" />
                         </button>
                         <button 
                           type="button"
                           onClick={() => setProdAEliminar(prod)}
-                          className="w-7 h-7 rounded-full text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors text-xs active:scale-90"
+                          className="w-7 h-7 rounded-full text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors active:scale-90"
                           title="Eliminar de catálogo"
                         >
-                          🗑️
+                          <IconTrash className="w-3.5 h-3.5" />
                         </button>
                         <button 
                           type="button"
@@ -814,7 +838,7 @@ export default function GroceryTab({
                           className="bg-white border border-[#EADBCE] text-[#2D1C14] w-7 h-7 rounded-full font-extrabold text-sm hover:bg-[#2D1C14] hover:border-[#2D1C14] hover:text-white active:scale-90 transition-all shadow-2xs flex items-center justify-center"
                           title="Agregar a compra actual"
                         >
-                          +
+                          <IconPlus className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </li>
@@ -824,14 +848,17 @@ export default function GroceryTab({
             </div>
 
             {/* Columna Derecha: Tabla Interactiva de Compra Actual */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-8">
               <div className="bg-white p-6 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 min-h-[580px] flex flex-col justify-between">
                 <div>
                   {/* Encabezado y Acciones de la Lista */}
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5 pb-3 border-b border-[#EADBCE]/60">
                     <div className="flex items-center gap-2">
                       <h3 className="text-xl font-bold text-[#2D1C14] flex items-center gap-2">
-                        <span>🛒</span> Compra Actual
+                        <span className="w-8 h-8 rounded-xl bg-[#FAF5F0] border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center">
+                          <IconShoppingBag className="w-4 h-4" />
+                        </span>
+                        <span>Compra Actual</span>
                       </h3>
                       <span className="text-[10px] font-bold text-[#8D6B57] bg-[#FAF5F0] px-2 py-0.5 rounded-lg border border-[#EADBCE]/60">
                         {listaFiltrada.length}
@@ -876,7 +903,8 @@ export default function GroceryTab({
                           className="bg-[#2D1C14] hover:bg-[#3E271D] text-white font-bold px-3.5 py-1.5 rounded-xl transition-all active:scale-95 shadow-xs text-xs flex items-center gap-1.5"
                           title="Guardar la compra realizada en el historial"
                         >
-                          <span>💾</span> Guardar Compra
+                          <IconSave className="w-3.5 h-3.5" />
+                          <span>Guardar Compra</span>
                         </button>
                       )}
 
@@ -884,9 +912,10 @@ export default function GroceryTab({
                         <button 
                           type="button"
                           onClick={() => setModalVaciar(true)} 
-                          className="text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-xl transition-all active:scale-95 shadow-2xs border border-rose-200"
+                          className="text-xs font-bold text-rose-700 bg-rose-50 hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-xl transition-all active:scale-95 shadow-2xs border border-rose-200 inline-flex items-center gap-1.5"
                         >
-                          🗑️ Vaciar
+                          <IconTrash className="w-3.5 h-3.5" />
+                          <span>Vaciar</span>
                         </button>
                       )}
                     </div>
@@ -895,7 +924,9 @@ export default function GroceryTab({
                   {/* Tabla de Artículos con Edición Directa de Valor */}
                   {listaFiltrada.length === 0 ? (
                      <div className="flex flex-col items-center justify-center h-80 text-[#8D6B57] bg-[#FAF5F0]/50 rounded-2xl border border-dashed border-[#EADBCE]">
-                       <span className="text-4xl mb-3 opacity-40">🛍️</span>
+                       <div className="w-14 h-14 rounded-2xl bg-white border border-[#EADBCE] text-[#8D6B57] flex items-center justify-center mb-3 shadow-2xs">
+                         <IconShoppingBag className="w-7 h-7" />
+                       </div>
                        <p className="font-bold text-sm text-[#3E271D]">No hay productos en esta vista.</p>
                        <p className="text-xs text-[#8D6B57] mt-1">Agrega productos desde tu catálogo a la izquierda.</p>
                      </div>
@@ -926,7 +957,9 @@ export default function GroceryTab({
                                       onChange={(e) => onActualizarItem(item.id, 'comprado', e.target.checked)} 
                                       className="peer appearance-none w-5 h-5 border-2 border-[#EADBCE] rounded-md checked:bg-[#2D1C14] checked:border-[#2D1C14] cursor-pointer transition-all" 
                                     />
-                                    <span className="absolute text-white font-bold text-xs pointer-events-none opacity-0 peer-checked:opacity-100">✓</span>
+                                    <span className="absolute text-white pointer-events-none opacity-0 peer-checked:opacity-100 flex items-center justify-center">
+                                      <IconCheck className="w-3 h-3" strokeWidth={3} />
+                                    </span>
                                   </div>
                                 </td>
                                 <td className="p-2.5">
@@ -935,8 +968,9 @@ export default function GroceryTab({
                                   </span>
                                   <div className="flex items-center gap-1.5 mt-0.5 text-[11px] text-[#8D6B57] font-medium">
                                     {item.categoria && (
-                                      <span className="bg-[#FAF5F0] px-1.5 py-0.2 rounded text-[9px] font-bold text-[#6F4A39] border border-[#EADBCE]/50">
-                                        {item.categoria}
+                                      <span className="bg-[#FAF5F0] px-1.5 py-0.5 rounded text-[9px] font-bold text-[#6F4A39] border border-[#EADBCE]/50 inline-flex items-center gap-1">
+                                        <CategoryIcon category={item.categoria} className="w-2.5 h-2.5 shrink-0" />
+                                        <span>{limpiarCategoriaGrocery(item.categoria)}</span>
                                       </span>
                                     )}
                                   </div>
@@ -983,18 +1017,18 @@ export default function GroceryTab({
                                     <button 
                                       type="button"
                                       onClick={() => abrirEdicionItem(item)}
-                                      className="w-6 h-6 rounded-full bg-[#FAF5F0] text-[#8D6B57] hover:bg-[#EADBCE] hover:text-[#2D1C14] active:scale-90 transition-all flex items-center justify-center text-xs shadow-2xs" 
+                                      className="w-7 h-7 rounded-full bg-[#FAF5F0] text-[#8D6B57] hover:bg-[#EADBCE] hover:text-[#2D1C14] active:scale-90 transition-all flex items-center justify-center shadow-2xs" 
                                       title="Editar precio y detalles"
                                     >
-                                      ✏️
+                                      <IconEdit className="w-3.5 h-3.5" />
                                     </button>
                                     <button 
                                       type="button"
                                       onClick={() => onEliminarItem(item.id)} 
-                                      className="w-6 h-6 rounded-full bg-[#FAF5F0] text-[#8D6B57] hover:bg-rose-50 hover:text-rose-600 active:scale-90 transition-all flex items-center justify-center text-xs shadow-2xs" 
+                                      className="w-7 h-7 rounded-full bg-[#FAF5F0] text-[#8D6B57] hover:bg-rose-50 hover:text-rose-600 active:scale-90 transition-all flex items-center justify-center shadow-2xs" 
                                       title="Quitar de compra"
                                     >
-                                      ✕
+                                      <IconX className="w-3.5 h-3.5" />
                                     </button>
                                   </div>
                                 </td>
@@ -1028,7 +1062,8 @@ export default function GroceryTab({
                         }}
                         className="bg-[#2D1C14] hover:bg-[#3E271D] text-white font-bold px-4 py-2 rounded-xl transition-all active:scale-95 shadow-xs text-xs flex items-center gap-1.5"
                       >
-                        <span>💾</span> Guardar Compra
+                        <IconSave className="w-3.5 h-3.5" />
+                        <span>Guardar Compra</span>
                       </button>
                     </div>
                   </div>
@@ -1046,10 +1081,10 @@ export default function GroceryTab({
         <div className="space-y-6 animate-fade-in">
           
           {/* Métricas del Historial */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center text-xl font-bold shrink-0 border border-[#EADBCE]/60">
-                💰
+              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
+                <IconWallet className="w-6 h-6" />
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">Total Invertido en Compras</span>
@@ -1060,8 +1095,8 @@ export default function GroceryTab({
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center text-xl font-bold shrink-0 border border-[#EADBCE]/60">
-                🛍️
+              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
+                <IconShoppingBag className="w-6 h-6" />
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">Compras Realizadas</span>
@@ -1072,8 +1107,8 @@ export default function GroceryTab({
             </div>
 
             <div className="bg-white p-6 rounded-3xl border border-[#EADBCE]/80 shadow-[0_2px_16px_rgba(45,28,20,0.03)] flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center text-xl font-bold shrink-0 border border-[#EADBCE]/60">
-                📊
+              <div className="w-12 h-12 rounded-2xl bg-[#FAF5F0] text-[#2D1C14] flex items-center justify-center shrink-0 border border-[#EADBCE]/60 shadow-2xs">
+                <IconChartBar className="w-6 h-6" />
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">Promedio por Compra</span>
@@ -1088,23 +1123,29 @@ export default function GroceryTab({
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80">
             <div className="flex justify-between items-center mb-6 pb-3 border-b border-[#EADBCE]/60">
               <h3 className="text-lg font-bold text-[#2D1C14] flex items-center gap-2">
-                <span>📋</span> Compras Registradas en Historial
+                <span className="w-8 h-8 rounded-xl bg-[#FAF5F0] border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center">
+                  <IconCopy className="w-4 h-4" />
+                </span>
+                <span>Compras Registradas en Historial</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setVistaPrincipal('compra_actual')}
                 className="text-xs font-bold text-[#2D1C14] hover:underline flex items-center gap-1"
               >
-                <span>➕ Ir a Compra Actual</span>
+                <IconPlus className="w-3.5 h-3.5" />
+                <span>Ir a Compra Actual</span>
               </button>
             </div>
 
             {historialCompleto.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-[#8D6B57] bg-[#FAF5F0]/50 rounded-2xl border border-dashed border-[#EADBCE]">
-                <span className="text-4xl mb-3 opacity-40">🧾</span>
+                <div className="w-14 h-14 rounded-2xl bg-white border border-[#EADBCE] text-[#8D6B57] flex items-center justify-center mb-3 shadow-2xs">
+                  <IconReceipt className="w-7 h-7" />
+                </div>
                 <p className="font-bold text-sm text-[#3E271D]">Aún no tienes compras guardadas en el historial.</p>
                 <p className="text-xs text-[#8D6B57] mt-1 max-w-sm text-center">
-                  Agrega los productos en &quot;Compra Actual&quot; y haz clic en &quot;💾 Guardar Compra&quot; para registrar cada compra que realices.
+                  Agrega los productos en &quot;Compra Actual&quot; y haz clic en &quot;Guardar Compra&quot; para registrar cada compra que realices.
                 </p>
                 <button
                   type="button"
@@ -1115,25 +1156,28 @@ export default function GroceryTab({
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
                 {historialCompleto.map((compra) => {
                   const expandida = compraExpandidaId === compra.id;
                   return (
                     <div 
                       key={compra.id} 
-                      className="p-5 rounded-2xl border border-[#EADBCE]/80 bg-[#FAF5F0]/40 hover:bg-[#FAF5F0]/80 transition-all space-y-3"
+                      className={`p-5 rounded-2xl border border-[#EADBCE]/80 bg-[#FAF5F0]/40 hover:bg-[#FAF5F0]/80 transition-all space-y-3 ${expandida ? 'xl:col-span-2' : ''}`}
                     >
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-lg">🛍️</span>
+                            <span className="w-8 h-8 rounded-xl bg-white border border-[#EADBCE] text-[#2D1C14] flex items-center justify-center shrink-0">
+                              <IconShoppingBag className="w-4 h-4" />
+                            </span>
                             <span className="font-extrabold text-[#2D1C14] text-base">{compra.nombre}</span>
                             <span className="text-[10px] font-bold text-[#8D6B57] bg-white px-2 py-0.5 rounded-md border border-[#EADBCE]/60">
                               {compra.items_count || compra.items?.length || 0} productos
                             </span>
                           </div>
-                          <p className="text-xs text-[#8D6B57] font-medium flex items-center gap-1">
-                            <span>📅</span> {formatearFechaBonita(compra.fecha)}
+                          <p className="text-xs text-[#8D6B57] font-medium flex items-center gap-1.5 pl-10">
+                            <IconCalendar className="w-3.5 h-3.5" />
+                            <span>{formatearFechaBonita(compra.fecha)}</span>
                           </p>
                         </div>
 
@@ -1150,30 +1194,32 @@ export default function GroceryTab({
                             <button
                               type="button"
                               onClick={() => setCompraExpandidaId(expandida ? null : compra.id)}
-                              className="px-3 py-1.5 rounded-xl border border-[#EADBCE] bg-white hover:bg-[#FAF5F0] text-[#2D1C14] text-xs font-bold transition-all active:scale-95 shadow-2xs flex items-center gap-1"
+                              className="px-3 py-1.5 rounded-xl border border-[#EADBCE] bg-white hover:bg-[#FAF5F0] text-[#2D1C14] text-xs font-bold transition-all active:scale-95 shadow-2xs flex items-center gap-1.5"
                               title="Ver desglose de productos"
                             >
-                              <span>{expandida ? '▲ Ocultar' : '▼ Productos'}</span>
+                              <IconChevronRight className={`w-3.5 h-3.5 transition-transform ${expandida ? '-rotate-90' : 'rotate-90'}`} />
+                              <span>{expandida ? 'Ocultar' : 'Productos'}</span>
                             </button>
 
                             {/* Botón Cargar de nuevo en Compra Actual */}
                             <button
                               type="button"
                               onClick={() => cargarCompraAListaActual(compra)}
-                              className="px-3 py-1.5 rounded-xl border border-[#2D1C14] bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold transition-all active:scale-95 shadow-xs flex items-center gap-1"
+                              className="px-3 py-1.5 rounded-xl border border-[#2D1C14] bg-[#2D1C14] hover:bg-[#3E271D] text-white text-xs font-bold transition-all active:scale-95 shadow-xs flex items-center gap-1.5"
                               title="Cargar estos productos a la compra actual para volver a comprarlos"
                             >
-                              <span>🔄 Repetir</span>
+                              <IconRefresh className="w-3.5 h-3.5" />
+                              <span>Repetir</span>
                             </button>
 
                             {/* Botón Eliminar del historial */}
                             <button
                               type="button"
                               onClick={() => eliminarCompraDelHistorial(compra)}
-                              className="w-8 h-8 rounded-xl text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors text-xs active:scale-90 border border-[#EADBCE]/60"
+                              className="w-8 h-8 rounded-xl text-[#8D6B57] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition-colors active:scale-90 border border-[#EADBCE]/60"
                               title="Eliminar compra del historial"
                             >
-                              🗑️
+                              <IconTrash className="w-3.5 h-3.5" />
                             </button>
                           </div>
                         </div>
@@ -1200,7 +1246,12 @@ export default function GroceryTab({
                                 {compra.items.map((it: CompraHistorialItem, idx: number) => (
                                   <tr key={idx} className="hover:bg-[#FAF5F0]/50 transition-colors">
                                     <td className="py-2.5 px-3 font-bold text-[#2D1C14]">{it.nombre}</td>
-                                    <td className="py-2.5 px-3 text-[#8D6B57]">{it.categoria || 'General'}</td>
+                                    <td className="py-2.5 px-3 text-[#8D6B57]">
+                                      <span className="inline-flex items-center gap-1.5">
+                                        <CategoryIcon category={it.categoria} className="w-3 h-3 shrink-0" />
+                                        <span>{limpiarCategoriaGrocery(it.categoria)}</span>
+                                      </span>
+                                    </td>
                                     <td className="py-2.5 px-3 text-center font-bold text-[#2D1C14]">{it.cantidad}</td>
                                     <td className="py-2.5 px-3 text-right text-[#6F4A39]">${Number(it.precio_unitario).toLocaleString('es-CO')}</td>
                                     <td className="py-2.5 px-3 text-right font-extrabold text-[#2D1C14]">${Number(it.subtotal).toLocaleString('es-CO')}</td>
@@ -1227,7 +1278,12 @@ export default function GroceryTab({
         <Modal
           isOpen={modalGuardarCompra}
           onClose={() => setModalGuardarCompra(false)}
-          title="💾 Guardar Compra Realizada"
+          title={
+            <>
+              <IconSave className="w-4 h-4 text-[#8D6B57]" />
+              <span>Guardar Compra Realizada</span>
+            </>
+          }
         >
           <form onSubmit={guardarCompraRealizada} className="space-y-4">
             <div>
@@ -1268,7 +1324,7 @@ export default function GroceryTab({
                   className="w-full p-2.5 border border-[#EADBCE] rounded-xl bg-[#FAF5F0]/50 text-[#2D1C14] font-bold outline-none text-xs"
                 >
                   <option value="todos">Todos los productos ({mercadoLista.length})</option>
-                  <option value="solo_listos">Solo los marcados ✔ ({mercadoLista.filter(i => i.comprado).length})</option>
+                  <option value="solo_listos">Solo los marcados ({mercadoLista.filter(i => i.comprado).length})</option>
                 </select>
               </div>
             </div>

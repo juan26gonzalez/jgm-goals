@@ -25,10 +25,10 @@ import FinancesTab from '@/components/finances/FinancesTab';
 import GroceryTab from '@/components/grocery/GroceryTab';
 
 const navItems: NavItem[] = [
-  { id: 'calendario', icon: '📅', label: 'Dashboard' },
-  { id: 'habitos', icon: '🎯', label: 'Targets' },
-  { id: 'finanzas', icon: '💰', label: 'Finances' },
-  { id: 'supermercado', icon: '🛒', label: 'Grocery' }
+  { id: 'calendario', label: 'Dashboard' },
+  { id: 'habitos', label: 'Targets' },
+  { id: 'finanzas', label: 'Finances' },
+  { id: 'supermercado', label: 'Grocery' }
 ];
 
 export default function Home() {
@@ -178,7 +178,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FAF7F4] pb-28 md:pb-12 p-4 md:p-8">
+    <main className="min-h-screen bg-[#FAF7F4] pb-28 md:pb-12 px-3 sm:px-6 lg:px-8 py-4 md:py-7">
       <Header 
         pestañaActiva={pestañaActiva} 
         setPestañaActiva={setPestañaActiva} 
