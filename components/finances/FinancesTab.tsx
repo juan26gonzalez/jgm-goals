@@ -139,12 +139,26 @@ export default function FinancesTab({
   const totalAportadoGeneral = Object.values(totalesPorPersona).reduce((sum, p) => sum + p.total, 0);
   const personasOrdenadas = Object.entries(totalesPorPersona).sort((a, b) => b[1].total - a[1].total);
 
+  // Desglose ordenado por categoría y avance individual por compromiso activo
+  const categoriasOrdenadas = Object.entries(categoriasGastos).sort((a, b) => Number(b[1]) - Number(a[1]));
+  const resumenGastosActivos = gastosActivos
+    .map(g => {
+      const recaudado = cuotasFamilia
+        .filter(c => c.gasto_id === g.id)
+        .reduce((sum, ap) => sum + (Number(ap.monto_cuota) || 0), 0);
+      const meta = Number(g.monto_total) || 0;
+      const pct = meta > 0 ? Math.min(100, (recaudado / meta) * 100) : 0;
+      return { gasto: g, recaudado, meta, pct };
+    })
+    .sort((a, b) => b.meta - a.meta);
+  const totalRecaudadoActivos = resumenGastosActivos.reduce((sum, item) => sum + item.recaudado, 0);
+  const faltanteActivos = Math.max(0, totalGastosMes - totalRecaudadoActivos);
+  const pctCoberturaActivos = totalGastosMes > 0 ? Math.min(100, (totalRecaudadoActivos / totalGastosMes) * 100) : 0;
+
   // Identificar qué compromisos activos ya están cubiertos al 100%
-  const gastosCubiertosPendientesRenovar = gastosActivos.filter(g => {
-    const aps = cuotasFamilia.filter(c => c.gasto_id === g.id);
-    const totalAportes = aps.reduce((sum, ap) => sum + (Number(ap.monto_cuota) || 0), 0);
-    return Number(g.monto_total) > 0 && totalAportes >= Number(g.monto_total);
-  });
+  const gastosCubiertosPendientesRenovar = resumenGastosActivos
+    .filter(({ meta, recaudado }) => meta > 0 && recaudado >= meta)
+    .map(({ gasto }) => gasto);
 
   // Manejadores de Aportes
   function handleAporteAgregado(nuevoAporte: CuotaAporte) {
@@ -493,44 +507,157 @@ export default function FinancesTab({
           )}
 
           {(gastosActivos.length > 0 || personasOrdenadas.length > 0) && (
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-stretch">
-              {/* Distribución del Presupuesto Total */}
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+              {/* Columna Izquierda: Distribución del Presupuesto + Avance por Compromiso */}
               {gastosActivos.length > 0 && (
-                <div className={`${personasOrdenadas.length > 0 ? 'xl:col-span-5' : 'xl:col-span-12'} bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 flex flex-col justify-between`}>
-                  <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-1">
-                      Distribución del Presupuesto Activo
-                    </span>
-                    <p className="text-3xl md:text-4xl font-extrabold text-[#2D1C14] mb-6 tracking-tight">
-                      ${totalGastosMes.toLocaleString('es-CO')}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <div className="w-full h-3 rounded-full flex overflow-hidden mb-4 bg-[#FAF5F0]">
-                      {Object.entries(categoriasGastos).map(([cat, montoCat], i) => {
-                        const valorMonto = Number(montoCat) || 0;
-                        return (
-                          <div 
-                            key={cat} 
-                            title={`${cat}: $${valorMonto.toLocaleString()}`} 
-                            className={`h-full transition-all duration-700 ${coloresCategorias[i % coloresCategorias.length]}`} 
-                            style={{ width: `${totalGastosMes > 0 ? (valorMonto / totalGastosMes) * 100 : 0}%` }}
-                          ></div>
-                        );
-                      })}
+                <div
+                  className={
+                    personasOrdenadas.length > 0
+                      ? 'xl:col-span-4 flex flex-col gap-5'
+                      : 'xl:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start'
+                  }
+                >
+                  {/* Card 1: Distribución del Presupuesto Activo */}
+                  <div className="bg-white p-6 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 space-y-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-1">
+                          Distribución del Presupuesto Activo
+                        </span>
+                        <p className="text-3xl font-extrabold text-[#2D1C14] tracking-tight tabular-nums">
+                          ${totalGastosMes.toLocaleString('es-CO')}
+                        </p>
+                      </div>
+                      <span className="text-[11px] font-bold text-[#6F4A39] bg-[#FAF5F0] px-2.5 py-1 rounded-full border border-[#EADBCE]/70 shrink-0">
+                        {gastosActivos.length} {gastosActivos.length === 1 ? 'activo' : 'activos'}
+                      </span>
                     </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      {Object.entries(categoriasGastos).map(([cat, montoCat], i) => {
-                        const valorMonto = Number(montoCat) || 0;
-                        return (
-                          <div key={cat} className="flex items-center gap-1.5 text-xs font-bold text-[#4A3225] bg-[#FAF5F0] px-2.5 py-1 rounded-lg border border-[#EADBCE]/60">
-                            <span className={`w-2 h-2 rounded-full ${coloresCategorias[i % coloresCategorias.length]}`}></span>
-                            {cat} <span className="text-[#8D6B57] font-medium ml-0.5">{totalGastosMes > 0 ? ((valorMonto / totalGastosMes) * 100).toFixed(0) : 0}%</span>
+
+                    {/* Cobertura Recaudada vs Faltante */}
+                    <div className="bg-[#FAF5F0]/80 border border-[#EADBCE]/70 rounded-2xl p-3.5 space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">
+                          Cobertura Recaudada
+                        </span>
+                        <span className="text-xs font-black text-[#2D1C14] tabular-nums">
+                          {pctCoberturaActivos.toFixed(0)}%
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-[#EADBCE]/60 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-[#2D1C14] transition-all duration-700"
+                          style={{ width: `${pctCoberturaActivos}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 text-[11px] font-bold text-[#6F4A39] tabular-nums">
+                        <span>Recaudado: ${totalRecaudadoActivos.toLocaleString('es-CO')}</span>
+                        <span>Faltante: ${faltanteActivos.toLocaleString('es-CO')}</span>
+                      </div>
+                    </div>
+
+                    {/* Desglose por Categoría */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57]">
+                          Desglose por Categoría
+                        </span>
+                        <span className="text-[10px] font-bold text-[#8D6B57]">
+                          {categoriasOrdenadas.length} {categoriasOrdenadas.length === 1 ? 'categoría' : 'categorías'}
+                        </span>
+                      </div>
+
+                      <div className="w-full h-2.5 rounded-full flex overflow-hidden bg-[#FAF5F0]">
+                        {categoriasOrdenadas.map(([cat, montoCat], i) => {
+                          const valorMonto = Number(montoCat) || 0;
+                          return (
+                            <div
+                              key={cat}
+                              title={`${cat}: $${valorMonto.toLocaleString('es-CO')}`}
+                              className={`h-full transition-all duration-700 ${coloresCategorias[i % coloresCategorias.length]}`}
+                              style={{ width: `${totalGastosMes > 0 ? (valorMonto / totalGastosMes) * 100 : 0}%` }}
+                            ></div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="space-y-1.5">
+                        {categoriasOrdenadas.map(([cat, montoCat], i) => {
+                          const valorMonto = Number(montoCat) || 0;
+                          const pctCat = totalGastosMes > 0 ? (valorMonto / totalGastosMes) * 100 : 0;
+                          return (
+                            <div
+                              key={cat}
+                              className="flex items-center justify-between gap-2 text-xs py-1.5 px-2.5 rounded-xl bg-[#FAF5F0]/60 border border-[#EADBCE]/50"
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className={`w-2 h-2 rounded-full shrink-0 ${coloresCategorias[i % coloresCategorias.length]}`}></span>
+                                <span className="font-bold text-[#4A3225] truncate" title={cat}>
+                                  {cat}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0 tabular-nums">
+                                <span className="font-extrabold text-[#2D1C14]">
+                                  ${valorMonto.toLocaleString('es-CO')}
+                                </span>
+                                <span className="text-[10px] font-bold text-[#8D6B57] bg-white px-1.5 py-0.5 rounded-md border border-[#EADBCE]/60 min-w-[36px] text-center">
+                                  {pctCat.toFixed(0)}%
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Avance por Compromiso */}
+                  <div className="bg-white p-6 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 space-y-3.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-0.5">
+                          Resumen Operativo
+                        </span>
+                        <h3 className="text-base font-extrabold text-[#2D1C14] tracking-tight">
+                          Avance por Compromiso
+                        </h3>
+                      </div>
+                      <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#FAF5F0] border border-[#EADBCE]/70 text-[#4A3225] shrink-0 tabular-nums">
+                        {gastosCubiertosPendientesRenovar.length}/{gastosActivos.length} cubiertos
+                      </span>
+                    </div>
+
+                    <div className="space-y-2 max-h-[290px] overflow-y-auto pr-1">
+                      {resumenGastosActivos.map(({ gasto, recaudado, meta, pct }) => (
+                        <div
+                          key={gasto.id}
+                          className="p-2.5 rounded-2xl bg-[#FAF5F0]/60 border border-[#EADBCE]/60 space-y-1.5"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span
+                              className="text-xs font-extrabold text-[#2D1C14] truncate"
+                              title={limpiarConceptoGasto(gasto.concepto)}
+                            >
+                              {limpiarConceptoGasto(gasto.concepto)}
+                            </span>
+                            <div className="flex items-center gap-1.5 shrink-0 tabular-nums">
+                              <span className="text-[11px] font-bold text-[#6F4A39]">
+                                ${recaudado.toLocaleString('es-CO')} / ${meta.toLocaleString('es-CO')}
+                              </span>
+                              <span className="text-[10px] font-black text-[#2D1C14] bg-white px-1.5 py-0.5 rounded-md border border-[#EADBCE]/60">
+                                {pct.toFixed(0)}%
+                              </span>
+                            </div>
                           </div>
-                        );
-                      })}
+                          <div className="w-full h-1.5 rounded-full bg-[#EADBCE]/50 overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${
+                                pct >= 100 ? 'bg-[#4A3225]' : 'bg-[#2D1C14]'
+                              }`}
+                              style={{ width: `${pct}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -538,59 +665,64 @@ export default function FinancesTab({
 
               {/* Sumatoria Total por Integrante */}
               {personasOrdenadas.length > 0 && (
-                <div className={`${gastosActivos.length > 0 ? 'xl:col-span-7' : 'xl:col-span-12'} bg-white p-6 md:p-8 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 space-y-5 animate-fade-in`}>
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                <div className={`${gastosActivos.length > 0 ? 'xl:col-span-8' : 'xl:col-span-12'} bg-white p-6 md:p-7 rounded-3xl shadow-[0_2px_16px_rgba(45,28,20,0.03)] border border-[#EADBCE]/80 space-y-5 animate-fade-in`}>
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#8D6B57] block mb-0.5">
                         Total por Integrante
                       </span>
-                      <h3 className="text-xl md:text-2xl font-extrabold text-[#2D1C14] tracking-tight">
-                        Sumatoria de Aportes
-                      </h3>
+                      <div className="flex items-center gap-2.5 flex-wrap">
+                        <h3 className="text-xl md:text-2xl font-extrabold text-[#2D1C14] tracking-tight">
+                          Sumatoria de Aportes
+                        </h3>
+                        <span className="text-[11px] font-bold text-[#6F4A39] bg-[#FAF5F0] px-2.5 py-0.5 rounded-full border border-[#EADBCE]/70">
+                          {personasOrdenadas.length} {personasOrdenadas.length === 1 ? 'integrante' : 'integrantes'}
+                        </span>
+                      </div>
                     </div>
                     <div className="bg-[#FAF5F0] px-3.5 py-2 rounded-2xl border border-[#EADBCE]/60 flex items-center gap-2 self-start sm:self-auto">
                       <span className="text-xs font-bold text-[#8D6B57]">Total Recaudado:</span>
-                      <span className="text-sm font-black text-[#2D1C14]">${totalAportadoGeneral.toLocaleString('es-CO')}</span>
+                      <span className="text-sm font-black text-[#2D1C14] tabular-nums">${totalAportadoGeneral.toLocaleString('es-CO')}</span>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     {personasOrdenadas.map(([nombre, data]) => {
                       const pct = totalAportadoGeneral > 0 ? (data.total / totalAportadoGeneral) * 100 : 0;
                       return (
-                        <div 
-                          key={nombre} 
-                          className="p-4 rounded-2xl bg-[#FAF5F0]/60 border border-[#EADBCE]/80 hover:bg-white hover:border-[#D9C4B3] transition-all flex flex-col justify-between space-y-3"
+                        <div
+                          key={nombre}
+                          className="p-3.5 rounded-2xl bg-[#FAF5F0]/60 border border-[#EADBCE]/80 hover:bg-white hover:border-[#D9C4B3] transition-all flex flex-col justify-between space-y-2.5"
                         >
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="w-8 h-8 rounded-full bg-[#2D1C14] text-white flex items-center justify-center text-xs font-black shrink-0 shadow-2xs">
-                                {nombre.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="min-w-0">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-full bg-[#2D1C14] text-white flex items-center justify-center text-[11px] font-black shrink-0 shadow-2xs">
+                              {nombre.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1.5">
                                 <h4 className="text-sm font-extrabold text-[#2D1C14] truncate" title={nombre}>
                                   {nombre}
                                 </h4>
-                                <span className="text-[10px] font-bold text-[#8D6B57] block">
-                                  {data.cuotasCount} {data.cuotasCount === 1 ? 'aporte' : 'aportes'} en {data.gastosIds.size} {data.gastosIds.size === 1 ? 'gasto' : 'gastos'}
+                                <span className="text-[11px] font-black text-[#2D1C14] bg-white px-2 py-0.5 rounded-md border border-[#EADBCE]/60 shrink-0 tabular-nums">
+                                  {pct.toFixed(0)}%
                                 </span>
                               </div>
+                              <span className="text-[10px] font-bold text-[#8D6B57] block truncate">
+                                {data.cuotasCount} {data.cuotasCount === 1 ? 'aporte' : 'aportes'} en {data.gastosIds.size} {data.gastosIds.size === 1 ? 'gasto' : 'gastos'}
+                              </span>
                             </div>
-                            <span className="text-xs font-black text-[#2D1C14] bg-white px-2 py-1 rounded-lg border border-[#EADBCE]/60 shrink-0">
-                              {pct.toFixed(0)}%
-                            </span>
                           </div>
 
                           <div>
                             <div className="flex justify-between items-baseline">
                               <span className="text-[10px] font-bold text-[#8D6B57] uppercase tracking-wider">Total Aportado</span>
-                              <span className="text-lg font-black text-[#2D1C14] tracking-tight">
+                              <span className="text-lg font-black text-[#2D1C14] tracking-tight tabular-nums">
                                 ${data.total.toLocaleString('es-CO')}
                               </span>
                             </div>
                             <div className="w-full bg-[#EADBCE]/50 rounded-full h-1.5 mt-1.5 overflow-hidden">
-                              <div 
-                                className="h-1.5 rounded-full bg-[#2D1C14] transition-all duration-500" 
+                              <div
+                                className="h-1.5 rounded-full bg-[#2D1C14] transition-all duration-500"
                                 style={{ width: `${pct}%` }}
                               ></div>
                             </div>
